@@ -35,11 +35,13 @@ func NewSdk(AccessKeyId, AccessKeySecret, Endpoint string) *Sdk {
 
 	qxClient := cli.NewQxClient(c)
 
-	return &Sdk{
+	sdk := &Sdk{
 		Version:    string(versionFile),
 		Cli:        qxClient,
 		MsgService: msg.NewMsgService(qxClient),
 	}
+	go sdk.AutoAuth()
+	return sdk
 }
 func (s *Sdk) GetVersion() string {
 	return s.Version

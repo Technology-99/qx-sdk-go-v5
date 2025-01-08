@@ -15,7 +15,7 @@ func main() {
 	AccessKeyId := os.Getenv("ACCESS_KEY_ID")
 	AccessKeySecret := os.Getenv("ACCESS_KEY_SECRET")
 
-	s := sdk.NewSdk(AccessKeyId, AccessKeySecret, Endpoint).AutoAuth()
+	s := sdk.NewSdk(AccessKeyId, AccessKeySecret, Endpoint)
 
 	// note: 生成验证码测试
 	//s.MsgService.CaptchaGenerate(context.Background(), nil)
