@@ -40,7 +40,7 @@ func NewSdk(AccessKeyId, AccessKeySecret, Endpoint string) *Sdk {
 		Cli:        qxClient,
 		MsgService: msg.NewMsgService(qxClient),
 	}
-	go sdk.AutoAuth()
+	sdk.AutoAuth()
 	return sdk
 }
 func (s *Sdk) GetVersion() string {
