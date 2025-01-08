@@ -22,12 +22,15 @@ import (
 var VersionF embed.FS
 
 type Sdk struct {
-	Version    string
+	Version string
+
 	ctx        context.Context    // 控制退出
 	cancel     context.CancelFunc // 取消函数
 	wg         sync.WaitGroup     // 等待后台任务退出
 	isShutdown bool               // 标记 SDK 是否已经关闭
-	Cli        *cli.QxClient
+
+	Cli *cli.QxClient
+
 	// note: 消息服务
 	MsgService msg.MsgService
 }

@@ -20,7 +20,6 @@ func main() {
 
 	// note: 生成验证码测试
 	//s.MsgService.CaptchaGenerate(context.Background(), nil)
-
 	logx.Infof("打印sdk版本号: %s", s.GetVersion())
 
 	time.Sleep(time.Second * 30)
