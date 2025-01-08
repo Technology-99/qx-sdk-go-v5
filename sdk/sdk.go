@@ -1,9 +1,11 @@
 package sdk
 
 import (
+	"context"
 	"embed"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/Technology-99/qx-sdk-go-v5/sdk/cli"
 	"github.com/Technology-99/qx-sdk-go-v5/sdk/config"
 	"github.com/Technology-99/qx-sdk-go-v5/sdk/msg"
@@ -12,6 +14,7 @@ import (
 	"github.com/Technology-99/qx-sdk-go-v5/sdk/types"
 	"github.com/Technology-99/third_party/response"
 	"github.com/zeromicro/go-zero/core/logx"
+	"sync"
 	"time"
 )
 
@@ -20,7 +23,12 @@ var VersionF embed.FS
 
 type Sdk struct {
 	Version    string
+	ctx        context.Context    // 控制退出
+	cancel     context.CancelFunc // 取消函数
+	wg         sync.WaitGroup     // 等待后台任务退出
+	isShutdown bool               // 标记 SDK 是否已经关闭
 	Cli        *cli.QxClient
+	// note: 消息服务
 	MsgService msg.MsgService
 }
 
@@ -33,12 +41,15 @@ func NewSdk(AccessKeyId, AccessKeySecret, Endpoint string) *Sdk {
 		panic(err)
 	}
 
-	qxClient := cli.NewQxClient(c)
+	ctx, cancel := context.WithCancel(context.Background())
+	qxClient := cli.NewQxClient(ctx, c)
 
 	sdk := &Sdk{
 		Version:    string(versionFile),
 		Cli:        qxClient,
 		MsgService: msg.NewMsgService(qxClient),
+		ctx:        ctx,
+		cancel:     cancel,
 	}
 	sdk.AutoAuth()
 	return sdk
@@ -53,6 +64,42 @@ func (s *Sdk) AutoAuth() *Sdk {
 	return s
 }
 
+func (s *Sdk) AutoRefresh() *Sdk {
+	if s.Cli.Config.AutoRefreshToken {
+		s.wg.Add(1)
+
+		go func() {
+			defer s.wg.Done() // 确保任务退出时通知 WaitGroup
+			ticker := time.NewTicker(1 * time.Second)
+			defer ticker.Stop()
+
+			for {
+				select {
+				case <-ticker.C:
+					if s.Cli.RetryTimes > s.Cli.Config.MaxRetryTimes {
+						// note: close auto refresh
+						s.Cli.Config.AutoRefreshToken = false
+						logx.Errorf("RefreshToken fail: %+v", types.ErrMaxErrTimes)
+						break
+					}
+					if _, err := s.AuthRefresh(); err != nil {
+						logx.Errorf("RefreshToken fail: %+v", err)
+						s.AuthFail(err)
+						time.Sleep(time.Second)
+						continue
+						//return errs
+					}
+				case <-s.ctx.Done():
+					fmt.Println("AutoRefresh stopped.")
+					return
+				}
+			}
+		}()
+	}
+	return s
+}
+
+// note: sdk auth api
 func (s *Sdk) AuthHealthZ() *Sdk {
 	reqFn := s.Cli.EasyNewRequest(s.Cli.Context, "/healthz", "GET", nil)
 	result, err := reqFn()
@@ -203,29 +250,6 @@ func (s *Sdk) AuthRefresh() (*Sdk, error) {
 	return s, nil
 }
 
-func (s *Sdk) AutoRefresh() *Sdk {
-	if s.Cli.Config.AutoRefreshToken {
-		// note: check refresh token is expired
-		for {
-			if s.Cli.RetryTimes > s.Cli.Config.MaxRetryTimes {
-				// note: close auto refresh
-				s.Cli.Config.AutoRefreshToken = false
-				logx.Errorf("RefreshToken fail: %+v", types.ErrMaxErrTimes)
-				break
-			}
-			if _, err := s.AuthRefresh(); err != nil {
-				logx.Errorf("RefreshToken fail: %+v", err)
-				s.AuthFail(err)
-				time.Sleep(time.Second)
-				continue
-				//return errs
-			}
-			time.Sleep(time.Second)
-		}
-	}
-	return s
-}
-
 func (s *Sdk) AuthSuccess() {
 	s.Cli.RetryTimes = 0
 	s.Cli.Status = cli.STATUS_LOGINED
@@ -250,4 +274,25 @@ func (s *Sdk) FormatSdkStatus() string {
 		return "未就绪"
 	}
 	return "未知状态"
+}
+
+func (s *Sdk) Destroy() {
+	if s.isShutdown {
+		fmt.Println("SDK already shutdown.")
+		return
+	}
+
+	fmt.Println("Shutting down SDK...")
+	s.isShutdown = true
+
+	// 通知后台任务退出
+	s.cancel()
+
+	// 等待所有 goroutine 退出
+	s.wg.Wait()
+
+	// 关闭 HTTP 客户端
+	s.Cli.Client.CloseIdleConnections()
+
+	fmt.Println("SDK resources released.")
 }

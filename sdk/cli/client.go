@@ -28,15 +28,13 @@ type QxClient struct {
 	RetryTimes          int
 }
 
-func NewQxClient(conf *config.Config) *QxClient {
+func NewQxClient(ctx context.Context, conf *config.Config) *QxClient {
 	httpClient := &http.Client{
 		Timeout: config.DefaultTimeout * time.Millisecond,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
 	}
-
-	ctx := context.Background()
 	return &QxClient{
 		Config:      conf,
 		AccessKeyId: conf.AccessKeyId,
