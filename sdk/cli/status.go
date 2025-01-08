@@ -1,4 +1,4 @@
-package types
+package cli
 
 const (
 	STATUS_NOT_READY = iota

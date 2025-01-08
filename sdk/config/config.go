@@ -1,8 +1,12 @@
-package sdk
+package config
 
 import (
 	"github.com/Technology-99/qx-sdk-go-v5/sdk/types"
 	"time"
+)
+
+const (
+	DefaultTimeout = 2000
 )
 
 type Config struct {
@@ -24,7 +28,7 @@ func DefaultConfig(AccessKeyId, AccessKeySecret string, Endpoint string) (config
 		AutoRetry:        true,
 		MaxRetryTimes:    3,
 		Debug:            false,
-		Timeout:          defaultTimeout,
+		Timeout:          DefaultTimeout,
 		AutoRefreshToken: true,
 		AccessKeyId:      AccessKeyId,
 		AccessKeySecret:  AccessKeySecret,

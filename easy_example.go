@@ -17,6 +17,9 @@ func main() {
 
 	s := sdk.NewSdk(AccessKeyId, AccessKeySecret, Endpoint).AutoAuth()
 
+	// note: 生成验证码测试
+	//s.MsgService.CaptchaGenerate(context.Background(), nil)
+
 	logx.Infof("打印sdk版本号: %s", s.GetVersion())
 	select {}
 }
