@@ -128,7 +128,7 @@ func (s *Sdk) AuthLogin() (*Sdk, error) {
 		return s, types.ErrNotReady
 	}
 
-	reqFn := s.Cli.EasyNewRequest(s.Cli.Context, "/auth/api/sign", "POST", &req.QxV5ApisApiSignReq{
+	reqFn := s.Cli.EasyNewRequest(s.Cli.Context, "/auth/sign", "POST", &req.QxV5ApisApiSignReq{
 		AccessKey:    s.Cli.Config.AccessKeyId,
 		AccessSecret: s.Cli.Config.AccessKeySecret,
 	})
@@ -201,7 +201,7 @@ func (s *Sdk) AuthRefresh() (*Sdk, error) {
 			logx.Infof("accessToken过期了，过期时间为: %s, 但是refreshToken没过期，过期时间为: %s, 当前时间为: %s", time.Unix(s.Cli.AccessTokenExpires, 0).Format(time.DateTime), time.Unix(s.Cli.RefreshTokenExpires, 0).Format(time.DateTime), nowTime.Format(time.DateTime))
 		}
 		// note: refreshToken没过期，但是accessToken过期了
-		reqFn := s.Cli.EasyNewRequest(s.Cli.Context, "/auth/api/refresh", "POST", &req.QxV5ApisApiRefreshReq{
+		reqFn := s.Cli.EasyNewRequest(s.Cli.Context, "/auth/refresh", "POST", &req.QxV5ApisApiRefreshReq{
 			AccessKey:    s.Cli.Config.AccessKeyId,
 			RefreshToken: s.Cli.RefreshToken,
 		})
