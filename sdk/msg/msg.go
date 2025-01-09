@@ -11,7 +11,7 @@ import (
 type (
 	MsgService interface {
 		// note: 生成验证码
-		CaptchaGenerate(ctx context.Context, params *CaptchaGenerateReq) (result *CaptchaGenerateResp, err error)
+		CaptchaGenerate(ctx context.Context, params *ApiCaptchaGenerateReq) (result *ApiCaptchaGenerateResp, err error)
 	}
 
 	defaultMsgService struct {
@@ -25,8 +25,8 @@ func NewMsgService(cli *cli.QxClient) MsgService {
 	}
 }
 
-func (m *defaultMsgService) CaptchaGenerate(ctx context.Context, params *CaptchaGenerateReq) (result *CaptchaGenerateResp, err error) {
-	result = &CaptchaGenerateResp{}
+func (m *defaultMsgService) CaptchaGenerate(ctx context.Context, params *ApiCaptchaGenerateReq) (result *ApiCaptchaGenerateResp, err error) {
+	result = &ApiCaptchaGenerateResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/captcha/generate", "POST", &params)
 	res, err := reqFn()
 	if err != nil {
@@ -36,6 +36,7 @@ func (m *defaultMsgService) CaptchaGenerate(ctx context.Context, params *Captcha
 	_ = json.Unmarshal(res, &result)
 	if result.Code != response.SUCCESS {
 		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		return result, nil
 	}
 	return result, nil
 }

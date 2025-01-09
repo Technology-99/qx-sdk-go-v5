@@ -10,6 +10,7 @@ import (
 	"github.com/Technology-99/third_party/commKey"
 	"github.com/Technology-99/third_party/middleware"
 	"github.com/Technology-99/third_party/sony"
+	"github.com/zeromicro/go-zero/core/logx"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -61,7 +62,9 @@ func (cli *QxClient) WithTimeout(timeout time.Duration) *QxClient {
 }
 
 func (cli *QxClient) EasyNewRequest(ctx context.Context, relativePath string, method string, sendBody interface{}) func() ([]byte, error) {
-	apiUrl := fmt.Sprintf("%s://%s/%s%s", cli.Config.Protocol, cli.Config.Endpoint, "/qiongxiao/v5/apis", relativePath)
+	apiUrl := fmt.Sprintf("%s://%s%s%s", cli.Config.Protocol, cli.Config.Endpoint, "/qiongxiao/v5/apis", relativePath)
+	//logx.Infof("requestID: %s, EasyNewRequest url: %s", cli.Context.Value(middleware.CtxRequestID), apiUrl)
+	logx.Infof("headers: %v", cli.GenHeaders())
 	return cli.NewRequest(ctx, apiUrl, method, cli.GenHeaders(), sendBody)
 }
 
@@ -129,6 +132,7 @@ func (cli *QxClient) GenHeaders() *map[string]string {
 	// note: 先处理请求头
 	headers := make(map[string]string)
 	headers["Content-Type"] = "application/json"
+	headers[commKey.HeaderXAuthMethodFor] = "api"
 	// note: 先判断ctx上是否存在requestId
 	if value := cli.Context.Value(KeyRequestId); value != nil {
 		headers[commKey.HeaderXRequestIDFor] = value.(string)
