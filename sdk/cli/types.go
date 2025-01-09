@@ -4,9 +4,8 @@ const (
 	KeyRequestId = "requestId"
 )
 
-type CommonApiResp struct {
-	Code      int32  `json:"code"`
-	Msg       string `json:"msg"`
-	RequestID string `json:"requestID"`
-	Path      string `json:"path"`
-}
+const (
+	STATUS_NOT_READY = iota
+	STATUS_READY
+	STATUS_LOGINED
+)

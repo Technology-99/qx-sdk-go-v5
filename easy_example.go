@@ -26,6 +26,23 @@ func main() {
 	//}
 	//logx.Infof("打印生成结果: %s", genCodeResult.Data.Img)
 
+	logx.Infof("打印客户端的accessKeyId: %s", s.Cli.AccessKeyId)
+	logx.Infof("打印客户端的accessToken: %s", s.Cli.AccessToken)
+
+	// note: 快速通过OssV4前端直传上传文件
+	//result, err := s.FileService.CreateWithOssV4FrontUpload(context.Background(), &types.AllowCreateModelTmsFileWithFrontedUpload{
+	//	Key:      "default",
+	//	Bucket:   "oss-tid1-test",
+	//	FileName: "aa.docx",
+	//	FileSize: 10842986,
+	//	MimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+	//})
+	//if err != nil {
+	//	logx.Errorf("生成验证码失败: %v", err)
+	//	return
+	//}
+	//logx.Infof("打印生成结果: %s", result.Data.SignUrl)
+
 	//time.Sleep(time.Second * 30)
 	//
 	//// note: 摧毁sdk，释放资源

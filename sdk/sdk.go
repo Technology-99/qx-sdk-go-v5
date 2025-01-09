@@ -8,9 +8,8 @@ import (
 	"fmt"
 	"github.com/Technology-99/qx-sdk-go-v5/sdk/cli"
 	"github.com/Technology-99/qx-sdk-go-v5/sdk/config"
+	"github.com/Technology-99/qx-sdk-go-v5/sdk/media"
 	"github.com/Technology-99/qx-sdk-go-v5/sdk/msg"
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/req"
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/resp"
 	"github.com/Technology-99/qx-sdk-go-v5/sdk/types"
 	"github.com/Technology-99/third_party/response"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -33,6 +32,8 @@ type Sdk struct {
 
 	// note: 消息服务
 	MsgService msg.MsgService
+	// note: 媒体服务
+	FileService media.FileService
 }
 
 func NewSdk(AccessKeyId, AccessKeySecret, Endpoint string) *Sdk {
@@ -48,11 +49,12 @@ func NewSdk(AccessKeyId, AccessKeySecret, Endpoint string) *Sdk {
 	qxClient := cli.NewQxClient(ctx, c)
 
 	sdk := &Sdk{
-		Version:    string(versionFile),
-		Cli:        qxClient,
-		MsgService: msg.NewMsgService(qxClient),
-		ctx:        ctx,
-		cancel:     cancel,
+		Version:     string(versionFile),
+		Cli:         qxClient,
+		ctx:         ctx,
+		cancel:      cancel,
+		MsgService:  msg.NewMsgService(qxClient),
+		FileService: media.NewFileService(qxClient),
 	}
 	sdk.AutoAuth()
 	return sdk
@@ -110,7 +112,7 @@ func (s *Sdk) AuthHealthZ() *Sdk {
 		logx.Errorf("healthz request error: %v", err)
 		return nil
 	}
-	res := resp.DefaultResponseBase{}
+	res := types.HealthzResp{}
 	_ = json.Unmarshal(result, &res)
 	if res.Code == response.SUCCESS {
 		logx.Infof("sdk healthz success")
@@ -128,7 +130,7 @@ func (s *Sdk) AuthLogin() (*Sdk, error) {
 		return s, types.ErrNotReady
 	}
 
-	reqFn := s.Cli.EasyNewRequest(s.Cli.Context, "/auth/sign", "POST", &req.QxV5ApisApiSignReq{
+	reqFn := s.Cli.EasyNewRequest(s.Cli.Context, "/auth/sign", "POST", &types.ApiSignReq{
 		AccessKey:    s.Cli.Config.AccessKeyId,
 		AccessSecret: s.Cli.Config.AccessKeySecret,
 	})
@@ -147,7 +149,7 @@ func (s *Sdk) AuthLogin() (*Sdk, error) {
 			s.AuthFail(err)
 		}
 	}
-	res := resp.QxV5ApisApiSignResp{}
+	res := types.ApiSignResp{}
 	_ = json.Unmarshal(result, &res)
 	if res.Code == response.SUCCESS {
 		logx.Infof("sdk api sign success")
@@ -201,7 +203,7 @@ func (s *Sdk) AuthRefresh() (*Sdk, error) {
 			logx.Infof("accessToken过期了，过期时间为: %s, 但是refreshToken没过期，过期时间为: %s, 当前时间为: %s", time.Unix(s.Cli.AccessTokenExpires, 0).Format(time.DateTime), time.Unix(s.Cli.RefreshTokenExpires, 0).Format(time.DateTime), nowTime.Format(time.DateTime))
 		}
 		// note: refreshToken没过期，但是accessToken过期了
-		reqFn := s.Cli.EasyNewRequest(s.Cli.Context, "/auth/refresh", "POST", &req.QxV5ApisApiRefreshReq{
+		reqFn := s.Cli.EasyNewRequest(s.Cli.Context, "/auth/refresh", "POST", &types.ApiRefreshReq{
 			AccessKey:    s.Cli.Config.AccessKeyId,
 			RefreshToken: s.Cli.RefreshToken,
 		})
@@ -220,7 +222,7 @@ func (s *Sdk) AuthRefresh() (*Sdk, error) {
 				s.AuthFail(err)
 			}
 		}
-		res := resp.QxV5ApisApiRefreshResp{}
+		res := types.ApiRefreshResp{}
 		_ = json.Unmarshal(result, &res)
 		if res.Code == response.SUCCESS {
 			logx.Infof("api refresh success")

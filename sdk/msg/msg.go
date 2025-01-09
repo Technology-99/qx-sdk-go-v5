@@ -4,14 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/Technology-99/qx-sdk-go-v5/sdk/cli"
+	"github.com/Technology-99/qx-sdk-go-v5/sdk/types"
 	"github.com/Technology-99/third_party/response"
 	"github.com/zeromicro/go-zero/core/logx"
+	"net/http"
 )
 
 type (
 	MsgService interface {
 		// note: 生成验证码
-		CaptchaGenerate(ctx context.Context, params *ApiCaptchaGenerateReq) (result *ApiCaptchaGenerateResp, err error)
+		CaptchaGenerate(ctx context.Context, params *types.ApiCaptchaGenerateReq) (result *types.ApiCaptchaGenerateResp, err error)
 	}
 
 	defaultMsgService struct {
@@ -25,9 +27,9 @@ func NewMsgService(cli *cli.QxClient) MsgService {
 	}
 }
 
-func (m *defaultMsgService) CaptchaGenerate(ctx context.Context, params *ApiCaptchaGenerateReq) (result *ApiCaptchaGenerateResp, err error) {
-	result = &ApiCaptchaGenerateResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/captcha/generate", "POST", &params)
+func (m *defaultMsgService) CaptchaGenerate(ctx context.Context, params *types.ApiCaptchaGenerateReq) (result *types.ApiCaptchaGenerateResp, err error) {
+	result = &types.ApiCaptchaGenerateResp{}
+	reqFn := m.cli.EasyNewRequest(ctx, "/captcha/generate", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
