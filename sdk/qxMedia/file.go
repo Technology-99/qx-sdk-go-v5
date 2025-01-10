@@ -1,10 +1,10 @@
-package media
+package qxMedia
 
 import (
 	"context"
 	"encoding/json"
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/cli"
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/types"
+	"github.com/Technology-99/qx-sdk-go-v5/sdk/qxCli"
+	"github.com/Technology-99/qx-sdk-go-v5/sdk/qxTypes"
 	"github.com/Technology-99/third_party/response"
 	"github.com/zeromicro/go-zero/core/logx"
 	"net/http"
@@ -13,40 +13,40 @@ import (
 type (
 	FileService interface {
 		// Create note: 创建一个文件
-		Create(ctx context.Context, params *types.AllowCreateModelTmsFile) (result *types.TmsFileApiCreateResp, err error)
+		Create(ctx context.Context, params *qxTypes.AllowCreateModelTmsFile) (result *qxTypes.TmsFileApiCreateResp, err error)
 		// CreateWithOssFrontUpload note: 添加一个文件并通过OSS前端直传
-		CreateWithOssFrontUpload(ctx context.Context, params *types.AllowCreateModelTmsFileWithFrontedUpload) (result *types.TmsFileCommonCreateWithOssFrontUploadResp, err error)
+		CreateWithOssFrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelTmsFileWithFrontedUpload) (result *qxTypes.TmsFileCommonCreateWithOssFrontUploadResp, err error)
 		// CreateWithOssV4FrontUpload note: 添加一个文件并通过OSSV4前端直传
-		CreateWithOssV4FrontUpload(ctx context.Context, params *types.AllowCreateModelTmsFileWithFrontedUpload) (result *types.TmsFileApiCreateWithOssV4FrontUploadResp, err error)
+		CreateWithOssV4FrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelTmsFileWithFrontedUpload) (result *qxTypes.TmsFileApiCreateWithOssV4FrontUploadResp, err error)
 		// Delete note: 删除一个
-		Delete(ctx context.Context, params *types.TmsFileApiFormIdReq) (result *types.TmsFileApiOKResp, err error)
+		Delete(ctx context.Context, params *qxTypes.TmsFileApiFormIdReq) (result *qxTypes.TmsFileApiOKResp, err error)
 		// DeleteMany note: 批量删除
-		DeleteMany(ctx context.Context, params *types.TmsFileApiFormIdsReq) (result *types.TmsFileApiOKResp, err error)
+		DeleteMany(ctx context.Context, params *qxTypes.TmsFileApiFormIdsReq) (result *qxTypes.TmsFileApiOKResp, err error)
 		// Update note: 修改基础数据
-		Update(ctx context.Context, params *types.AllowUpdateModelTmsFile) (result *types.TmsFileApiOKResp, err error)
+		Update(ctx context.Context, params *qxTypes.AllowUpdateModelTmsFile) (result *qxTypes.TmsFileApiOKResp, err error)
 		// UpdateStatus note: 修改启用状态
-		UpdateStatus(ctx context.Context, params *types.AllowUpdateStatusModelTmsFile) (result *types.TmsFileApiOKResp, err error)
+		UpdateStatus(ctx context.Context, params *qxTypes.AllowUpdateStatusModelTmsFile) (result *qxTypes.TmsFileApiOKResp, err error)
 		// Query note: 查询一个
-		Query(ctx context.Context, params *types.TmsFileApiFormIdReq) (result *types.TmsFileCommonQueryResp, err error)
+		Query(ctx context.Context, params *qxTypes.TmsFileApiFormIdReq) (result *qxTypes.TmsFileCommonQueryResp, err error)
 		// QueryListWhereIds note: 查询列表根据ids
-		QueryListWhereIds(ctx context.Context, params *types.TmsFileApiFormIdsReq) (result *types.TmsFileCommonQueryListResp, err error)
+		QueryListWhereIds(ctx context.Context, params *qxTypes.TmsFileApiFormIdsReq) (result *qxTypes.TmsFileCommonQueryListResp, err error)
 		// QueryList note: 查询列表
-		QueryList(ctx context.Context, params *types.TmsFileCommonSearchParams) (result *types.TmsFileCommonQueryListResp, err error)
+		QueryList(ctx context.Context, params *qxTypes.TmsFileCommonSearchParams) (result *qxTypes.TmsFileCommonQueryListResp, err error)
 	}
 
 	defaultFileService struct {
-		cli *cli.QxClient
+		cli *qxCli.QxClient
 	}
 )
 
-func NewFileService(cli *cli.QxClient) FileService {
+func NewFileService(cli *qxCli.QxClient) FileService {
 	return &defaultFileService{
 		cli: cli,
 	}
 }
 
-func (m *defaultFileService) Create(ctx context.Context, params *types.AllowCreateModelTmsFile) (result *types.TmsFileApiCreateResp, err error) {
-	result = &types.TmsFileApiCreateResp{}
+func (m *defaultFileService) Create(ctx context.Context, params *qxTypes.AllowCreateModelTmsFile) (result *qxTypes.TmsFileApiCreateResp, err error) {
+	result = &qxTypes.TmsFileApiCreateResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/create", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
@@ -61,8 +61,8 @@ func (m *defaultFileService) Create(ctx context.Context, params *types.AllowCrea
 	return result, nil
 }
 
-func (m *defaultFileService) CreateWithOssFrontUpload(ctx context.Context, params *types.AllowCreateModelTmsFileWithFrontedUpload) (result *types.TmsFileCommonCreateWithOssFrontUploadResp, err error) {
-	result = &types.TmsFileCommonCreateWithOssFrontUploadResp{}
+func (m *defaultFileService) CreateWithOssFrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelTmsFileWithFrontedUpload) (result *qxTypes.TmsFileCommonCreateWithOssFrontUploadResp, err error) {
+	result = &qxTypes.TmsFileCommonCreateWithOssFrontUploadResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/createWithOssFrontedUpload", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
@@ -77,8 +77,8 @@ func (m *defaultFileService) CreateWithOssFrontUpload(ctx context.Context, param
 	return result, nil
 }
 
-func (m *defaultFileService) CreateWithOssV4FrontUpload(ctx context.Context, params *types.AllowCreateModelTmsFileWithFrontedUpload) (result *types.TmsFileApiCreateWithOssV4FrontUploadResp, err error) {
-	result = &types.TmsFileApiCreateWithOssV4FrontUploadResp{}
+func (m *defaultFileService) CreateWithOssV4FrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelTmsFileWithFrontedUpload) (result *qxTypes.TmsFileApiCreateWithOssV4FrontUploadResp, err error) {
+	result = &qxTypes.TmsFileApiCreateWithOssV4FrontUploadResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/createWithOssV4FrontedUpload", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
@@ -93,8 +93,8 @@ func (m *defaultFileService) CreateWithOssV4FrontUpload(ctx context.Context, par
 	return result, nil
 }
 
-func (m *defaultFileService) Delete(ctx context.Context, params *types.TmsFileApiFormIdReq) (result *types.TmsFileApiOKResp, err error) {
-	result = &types.TmsFileApiOKResp{}
+func (m *defaultFileService) Delete(ctx context.Context, params *qxTypes.TmsFileApiFormIdReq) (result *qxTypes.TmsFileApiOKResp, err error) {
+	result = &qxTypes.TmsFileApiOKResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/delete", http.MethodDelete, &params)
 	res, err := reqFn()
 	if err != nil {
@@ -109,8 +109,8 @@ func (m *defaultFileService) Delete(ctx context.Context, params *types.TmsFileAp
 	return result, nil
 }
 
-func (m *defaultFileService) DeleteMany(ctx context.Context, params *types.TmsFileApiFormIdsReq) (result *types.TmsFileApiOKResp, err error) {
-	result = &types.TmsFileApiOKResp{}
+func (m *defaultFileService) DeleteMany(ctx context.Context, params *qxTypes.TmsFileApiFormIdsReq) (result *qxTypes.TmsFileApiOKResp, err error) {
+	result = &qxTypes.TmsFileApiOKResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/deleteMany", http.MethodDelete, &params)
 	res, err := reqFn()
 	if err != nil {
@@ -125,8 +125,8 @@ func (m *defaultFileService) DeleteMany(ctx context.Context, params *types.TmsFi
 	return result, nil
 }
 
-func (m *defaultFileService) Update(ctx context.Context, params *types.AllowUpdateModelTmsFile) (result *types.TmsFileApiOKResp, err error) {
-	result = &types.TmsFileApiOKResp{}
+func (m *defaultFileService) Update(ctx context.Context, params *qxTypes.AllowUpdateModelTmsFile) (result *qxTypes.TmsFileApiOKResp, err error) {
+	result = &qxTypes.TmsFileApiOKResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/update", http.MethodPut, &params)
 	res, err := reqFn()
 	if err != nil {
@@ -141,8 +141,8 @@ func (m *defaultFileService) Update(ctx context.Context, params *types.AllowUpda
 	return result, nil
 }
 
-func (m *defaultFileService) UpdateStatus(ctx context.Context, params *types.AllowUpdateStatusModelTmsFile) (result *types.TmsFileApiOKResp, err error) {
-	result = &types.TmsFileApiOKResp{}
+func (m *defaultFileService) UpdateStatus(ctx context.Context, params *qxTypes.AllowUpdateStatusModelTmsFile) (result *qxTypes.TmsFileApiOKResp, err error) {
+	result = &qxTypes.TmsFileApiOKResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/updateStatus", http.MethodPatch, &params)
 	res, err := reqFn()
 	if err != nil {
@@ -157,8 +157,8 @@ func (m *defaultFileService) UpdateStatus(ctx context.Context, params *types.All
 	return result, nil
 }
 
-func (m *defaultFileService) Query(ctx context.Context, params *types.TmsFileApiFormIdReq) (result *types.TmsFileCommonQueryResp, err error) {
-	result = &types.TmsFileCommonQueryResp{}
+func (m *defaultFileService) Query(ctx context.Context, params *qxTypes.TmsFileApiFormIdReq) (result *qxTypes.TmsFileCommonQueryResp, err error) {
+	result = &qxTypes.TmsFileCommonQueryResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/query", http.MethodGet, &params)
 	res, err := reqFn()
 	if err != nil {
@@ -173,8 +173,8 @@ func (m *defaultFileService) Query(ctx context.Context, params *types.TmsFileApi
 	return result, nil
 }
 
-func (m *defaultFileService) QueryListWhereIds(ctx context.Context, params *types.TmsFileApiFormIdsReq) (result *types.TmsFileCommonQueryListResp, err error) {
-	result = &types.TmsFileCommonQueryListResp{}
+func (m *defaultFileService) QueryListWhereIds(ctx context.Context, params *qxTypes.TmsFileApiFormIdsReq) (result *qxTypes.TmsFileCommonQueryListResp, err error) {
+	result = &qxTypes.TmsFileCommonQueryListResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/queryListWhereIds", http.MethodGet, &params)
 	res, err := reqFn()
 	if err != nil {
@@ -189,8 +189,8 @@ func (m *defaultFileService) QueryListWhereIds(ctx context.Context, params *type
 	return result, nil
 }
 
-func (m *defaultFileService) QueryList(ctx context.Context, params *types.TmsFileCommonSearchParams) (result *types.TmsFileCommonQueryListResp, err error) {
-	result = &types.TmsFileCommonQueryListResp{}
+func (m *defaultFileService) QueryList(ctx context.Context, params *qxTypes.TmsFileCommonSearchParams) (result *qxTypes.TmsFileCommonQueryListResp, err error) {
+	result = &qxTypes.TmsFileCommonQueryListResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/queryList", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {

@@ -1,7 +1,7 @@
-package config
+package qxConfig
 
 import (
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/types"
+	"github.com/Technology-99/qx-sdk-go-v5/sdk/qxTypes"
 	"time"
 )
 
@@ -34,7 +34,7 @@ func DefaultConfig(AccessKeyId, AccessKeySecret string, Endpoint string) (config
 		AccessKeySecret:  AccessKeySecret,
 		Endpoint:         Endpoint,
 		Deadline:         5,
-		Protocol:         types.ProtocolHttps,
+		Protocol:         qxTypes.ProtocolHttps,
 	}
 	return
 }

@@ -1,4 +1,4 @@
-package cli
+package qxCli
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/config"
+	"github.com/Technology-99/qx-sdk-go-v5/sdk/qxConfig"
 	"github.com/Technology-99/third_party/commKey"
 	"github.com/Technology-99/third_party/middleware"
 	"github.com/Technology-99/third_party/sony"
@@ -17,7 +17,7 @@ import (
 
 type QxClient struct {
 	*http.Client
-	Config              *config.Config
+	Config              *qxConfig.Config
 	Context             context.Context
 	Status              int
 	AccessKeyId         string
@@ -28,9 +28,9 @@ type QxClient struct {
 	RetryTimes          int
 }
 
-func NewQxClient(ctx context.Context, conf *config.Config) *QxClient {
+func NewQxClient(ctx context.Context, conf *qxConfig.Config) *QxClient {
 	httpClient := &http.Client{
-		Timeout: config.DefaultTimeout * time.Millisecond,
+		Timeout: qxConfig.DefaultTimeout * time.Millisecond,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},

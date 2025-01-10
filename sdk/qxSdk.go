@@ -1,4 +1,4 @@
-package sdk
+package qxSdk
 
 import (
 	"context"
@@ -6,11 +6,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/cli"
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/config"
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/media"
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/msg"
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/types"
+	"github.com/Technology-99/qx-sdk-go-v5/sdk/qxCli"
+	"github.com/Technology-99/qx-sdk-go-v5/sdk/qxConfig"
+	"github.com/Technology-99/qx-sdk-go-v5/sdk/qxMedia"
+	"github.com/Technology-99/qx-sdk-go-v5/sdk/qxMsg"
+	"github.com/Technology-99/qx-sdk-go-v5/sdk/qxTypes"
 	"github.com/Technology-99/third_party/response"
 	"github.com/zeromicro/go-zero/core/logx"
 	"sync"
@@ -28,17 +28,17 @@ type Sdk struct {
 	wg         sync.WaitGroup     // 等待后台任务退出
 	isShutdown bool               // 标记 SDK 是否已经关闭
 
-	Cli *cli.QxClient
+	Cli *qxCli.QxClient
 
 	// note: 消息服务
-	MsgService msg.MsgService
+	MsgService qxMsg.MsgService
 	// note: 媒体服务
-	FileService media.FileService
+	FileService qxMedia.FileService
 }
 
 func NewSdk(AccessKeyId, AccessKeySecret, Endpoint string) *Sdk {
 
-	c := config.DefaultConfig(AccessKeyId, AccessKeySecret, Endpoint)
+	c := qxConfig.DefaultConfig(AccessKeyId, AccessKeySecret, Endpoint)
 
 	versionFile, err := VersionF.ReadFile("version")
 	if err != nil {
@@ -46,15 +46,15 @@ func NewSdk(AccessKeyId, AccessKeySecret, Endpoint string) *Sdk {
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
-	qxClient := cli.NewQxClient(ctx, c)
+	qxClient := qxCli.NewQxClient(ctx, c)
 
 	sdk := &Sdk{
 		Version:     string(versionFile),
 		Cli:         qxClient,
 		ctx:         ctx,
 		cancel:      cancel,
-		MsgService:  msg.NewMsgService(qxClient),
-		FileService: media.NewFileService(qxClient),
+		MsgService:  qxMsg.NewMsgService(qxClient),
+		FileService: qxMedia.NewFileService(qxClient),
 	}
 	sdk.AutoAuth()
 	return sdk
@@ -84,7 +84,7 @@ func (s *Sdk) AutoRefresh() *Sdk {
 					if s.Cli.RetryTimes > s.Cli.Config.MaxRetryTimes {
 						// note: close auto refresh
 						s.Cli.Config.AutoRefreshToken = false
-						logx.Errorf("RefreshToken fail: %+v", types.ErrMaxErrTimes)
+						logx.Errorf("RefreshToken fail: %+v", qxTypes.ErrMaxErrTimes)
 						break
 					}
 					if _, err := s.AuthRefresh(); err != nil {
@@ -112,11 +112,11 @@ func (s *Sdk) AuthHealthZ() *Sdk {
 		logx.Errorf("healthz request error: %v", err)
 		return nil
 	}
-	res := types.HealthzResp{}
+	res := qxTypes.HealthzResp{}
 	_ = json.Unmarshal(result, &res)
 	if res.Code == response.SUCCESS {
 		logx.Infof("sdk healthz success")
-		s.Cli.Status = cli.STATUS_READY
+		s.Cli.Status = qxCli.STATUS_READY
 	} else {
 		panic(res.Msg)
 	}
@@ -125,12 +125,12 @@ func (s *Sdk) AuthHealthZ() *Sdk {
 
 func (s *Sdk) AuthLogin() (*Sdk, error) {
 	logx.Infof("打印sdk的状态: %s", s.FormatSdkStatus())
-	if s.Cli.Status == cli.STATUS_NOT_READY {
+	if s.Cli.Status == qxCli.STATUS_NOT_READY {
 		logx.Errorf("sdk not ready")
-		return s, types.ErrNotReady
+		return s, qxTypes.ErrNotReady
 	}
 
-	reqFn := s.Cli.EasyNewRequest(s.Cli.Context, "/auth/sign", "POST", &types.ApiSignReq{
+	reqFn := s.Cli.EasyNewRequest(s.Cli.Context, "/auth/sign", "POST", &qxTypes.ApiSignReq{
 		AccessKey:    s.Cli.Config.AccessKeyId,
 		AccessSecret: s.Cli.Config.AccessKeySecret,
 	})
@@ -139,8 +139,8 @@ func (s *Sdk) AuthLogin() (*Sdk, error) {
 		logx.Errorf("api sign error: %v", err)
 		if s.Cli.Config.AutoRetry {
 			if s.Cli.RetryTimes > s.Cli.Config.MaxRetryTimes {
-				s.Cli.Status = cli.STATUS_NOT_READY
-				panic(types.ErrMaxErrTimes)
+				s.Cli.Status = qxCli.STATUS_NOT_READY
+				panic(qxTypes.ErrMaxErrTimes)
 			} else {
 				s.AuthFail(err)
 				return s.AuthLogin()
@@ -149,7 +149,7 @@ func (s *Sdk) AuthLogin() (*Sdk, error) {
 			s.AuthFail(err)
 		}
 	}
-	res := types.ApiSignResp{}
+	res := qxTypes.ApiSignResp{}
 	_ = json.Unmarshal(result, &res)
 	if res.Code == response.SUCCESS {
 		logx.Infof("sdk api sign success")
@@ -165,8 +165,8 @@ func (s *Sdk) AuthLogin() (*Sdk, error) {
 	} else {
 		if s.Cli.Config.AutoRetry {
 			if s.Cli.RetryTimes > s.Cli.Config.MaxRetryTimes {
-				s.Cli.Status = cli.STATUS_NOT_READY
-				panic(types.ErrMaxErrTimes)
+				s.Cli.Status = qxCli.STATUS_NOT_READY
+				panic(qxTypes.ErrMaxErrTimes)
 			} else {
 				s.AuthFail(errors.New(res.Msg))
 				return s.AuthLogin()
@@ -184,8 +184,8 @@ func (s *Sdk) AuthRefresh() (*Sdk, error) {
 		logx.Infof("打印sdk的状态: %s", s.FormatSdkStatus())
 	}
 	// note: 如果链接未准备好，直接返回
-	if s.Cli.Status == cli.STATUS_NOT_READY {
-		return nil, types.ErrNotReady
+	if s.Cli.Status == qxCli.STATUS_NOT_READY {
+		return nil, qxTypes.ErrNotReady
 	}
 
 	nowTime := time.Now()
@@ -203,7 +203,7 @@ func (s *Sdk) AuthRefresh() (*Sdk, error) {
 			logx.Infof("accessToken过期了，过期时间为: %s, 但是refreshToken没过期，过期时间为: %s, 当前时间为: %s", time.Unix(s.Cli.AccessTokenExpires, 0).Format(time.DateTime), time.Unix(s.Cli.RefreshTokenExpires, 0).Format(time.DateTime), nowTime.Format(time.DateTime))
 		}
 		// note: refreshToken没过期，但是accessToken过期了
-		reqFn := s.Cli.EasyNewRequest(s.Cli.Context, "/auth/refresh", "POST", &types.ApiRefreshReq{
+		reqFn := s.Cli.EasyNewRequest(s.Cli.Context, "/auth/refresh", "POST", &qxTypes.ApiRefreshReq{
 			AccessKey:    s.Cli.Config.AccessKeyId,
 			RefreshToken: s.Cli.RefreshToken,
 		})
@@ -212,8 +212,8 @@ func (s *Sdk) AuthRefresh() (*Sdk, error) {
 			logx.Errorf("api refresh error: %v", err)
 			if s.Cli.Config.AutoRetry {
 				if s.Cli.RetryTimes > s.Cli.Config.MaxRetryTimes {
-					s.Cli.Status = cli.STATUS_NOT_READY
-					panic(types.ErrMaxErrTimes)
+					s.Cli.Status = qxCli.STATUS_NOT_READY
+					panic(qxTypes.ErrMaxErrTimes)
 				} else {
 					s.AuthFail(err)
 					return s.AuthRefresh()
@@ -222,7 +222,7 @@ func (s *Sdk) AuthRefresh() (*Sdk, error) {
 				s.AuthFail(err)
 			}
 		}
-		res := types.ApiRefreshResp{}
+		res := qxTypes.ApiRefreshResp{}
 		_ = json.Unmarshal(result, &res)
 		if res.Code == response.SUCCESS {
 			logx.Infof("api refresh success")
@@ -236,8 +236,8 @@ func (s *Sdk) AuthRefresh() (*Sdk, error) {
 		} else {
 			if s.Cli.Config.AutoRetry {
 				if s.Cli.RetryTimes > s.Cli.Config.MaxRetryTimes {
-					s.Cli.Status = cli.STATUS_NOT_READY
-					panic(types.ErrMaxErrTimes)
+					s.Cli.Status = qxCli.STATUS_NOT_READY
+					panic(qxTypes.ErrMaxErrTimes)
 				} else {
 					s.AuthFail(errors.New(res.Msg))
 					return s.AuthRefresh()
@@ -249,7 +249,7 @@ func (s *Sdk) AuthRefresh() (*Sdk, error) {
 	} else {
 		// note: refreshToken过期了
 		logx.Errorf("refreshToken 过期了")
-		s.Cli.Status = cli.STATUS_NOT_READY
+		s.Cli.Status = qxCli.STATUS_NOT_READY
 		return s.AuthHealthZ().AuthLogin()
 	}
 	return s, nil
@@ -257,25 +257,25 @@ func (s *Sdk) AuthRefresh() (*Sdk, error) {
 
 func (s *Sdk) AuthSuccess() {
 	s.Cli.RetryTimes = 0
-	s.Cli.Status = cli.STATUS_LOGINED
+	s.Cli.Status = qxCli.STATUS_LOGINED
 }
 
 func (s *Sdk) AuthFail(err error) {
 	if s.Cli.Config.AutoRetry {
 		s.Cli.RetryTimes++
 	} else {
-		s.Cli.Status = cli.STATUS_NOT_READY
+		s.Cli.Status = qxCli.STATUS_NOT_READY
 		panic(err)
 	}
 }
 
 func (s *Sdk) FormatSdkStatus() string {
 	switch s.Cli.Status {
-	case cli.STATUS_READY:
+	case qxCli.STATUS_READY:
 		return "已就绪"
-	case cli.STATUS_LOGINED:
+	case qxCli.STATUS_LOGINED:
 		return "已登录"
-	case cli.STATUS_NOT_READY:
+	case qxCli.STATUS_NOT_READY:
 		return "未就绪"
 	}
 	return "未知状态"
