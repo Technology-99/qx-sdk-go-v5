@@ -14,6 +14,7 @@ type (
 	MsgService interface {
 		// note: 生成验证码
 		CaptchaGenerate(ctx context.Context, params *qxTypes.ApiCaptchaGenerateReq) (result *qxTypes.ApiCaptchaGenerateResp, err error)
+		SmsSend(ctx context.Context, params *qxTypes.ApiSmsSendReq) (result *qxTypes.ApiSmsSendResp, err error)
 	}
 
 	defaultMsgService struct {
@@ -30,6 +31,22 @@ func NewMsgService(cli *qxCli.QxClient) MsgService {
 func (m *defaultMsgService) CaptchaGenerate(ctx context.Context, params *qxTypes.ApiCaptchaGenerateReq) (result *qxTypes.ApiCaptchaGenerateResp, err error) {
 	result = &qxTypes.ApiCaptchaGenerateResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/captcha/generate", http.MethodPost, &params)
+	res, err := reqFn()
+	if err != nil {
+		logx.Errorf("healthz request error: %v", err)
+		return nil, nil
+	}
+	_ = json.Unmarshal(res, &result)
+	if result.Code != response.SUCCESS {
+		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		return result, nil
+	}
+	return result, nil
+}
+
+func (m *defaultMsgService) SmsSend(ctx context.Context, params *qxTypes.ApiSmsSendReq) (result *qxTypes.ApiSmsSendResp, err error) {
+	result = &qxTypes.ApiSmsSendResp{}
+	reqFn := m.cli.EasyNewRequest(ctx, "/sms/send", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
