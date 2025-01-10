@@ -6,11 +6,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/qxCli"
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/qxConfig"
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/qxMedia"
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/qxMsg"
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/qxTypes"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxConfig"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxMedia"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxMsg"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
 	"github.com/Technology-99/third_party/response"
 	"github.com/zeromicro/go-zero/core/logx"
 	"sync"
@@ -20,7 +20,7 @@ import (
 //go:embed "version"
 var VersionF embed.FS
 
-type Sdk struct {
+type QxSdk struct {
 	Version string
 
 	ctx        context.Context    // 控制退出
@@ -36,7 +36,7 @@ type Sdk struct {
 	FileService qxMedia.FileService
 }
 
-func NewSdk(AccessKeyId, AccessKeySecret, Endpoint string) *Sdk {
+func NewQxSdk(AccessKeyId, AccessKeySecret, Endpoint string) *QxSdk {
 
 	c := qxConfig.DefaultConfig(AccessKeyId, AccessKeySecret, Endpoint)
 
@@ -48,7 +48,7 @@ func NewSdk(AccessKeyId, AccessKeySecret, Endpoint string) *Sdk {
 	ctx, cancel := context.WithCancel(context.Background())
 	qxClient := qxCli.NewQxClient(ctx, c)
 
-	sdk := &Sdk{
+	sdk := &QxSdk{
 		Version:     string(versionFile),
 		Cli:         qxClient,
 		ctx:         ctx,
@@ -59,17 +59,17 @@ func NewSdk(AccessKeyId, AccessKeySecret, Endpoint string) *Sdk {
 	sdk.AutoAuth()
 	return sdk
 }
-func (s *Sdk) GetVersion() string {
+func (s *QxSdk) GetVersion() string {
 	return s.Version
 }
 
-func (s *Sdk) AutoAuth() *Sdk {
+func (s *QxSdk) AutoAuth() *QxSdk {
 	s, _ = s.AuthHealthZ().AuthLogin()
 	go s.AutoRefresh()
 	return s
 }
 
-func (s *Sdk) AutoRefresh() *Sdk {
+func (s *QxSdk) AutoRefresh() *QxSdk {
 	if s.Cli.Config.AutoRefreshToken {
 		s.wg.Add(1)
 
@@ -105,7 +105,7 @@ func (s *Sdk) AutoRefresh() *Sdk {
 }
 
 // note: sdk auth api
-func (s *Sdk) AuthHealthZ() *Sdk {
+func (s *QxSdk) AuthHealthZ() *QxSdk {
 	reqFn := s.Cli.EasyNewRequest(s.Cli.Context, "/healthz", "GET", nil)
 	result, err := reqFn()
 	if err != nil {
@@ -123,8 +123,8 @@ func (s *Sdk) AuthHealthZ() *Sdk {
 	return s
 }
 
-func (s *Sdk) AuthLogin() (*Sdk, error) {
-	logx.Infof("打印sdk的状态: %s", s.FormatSdkStatus())
+func (s *QxSdk) AuthLogin() (*QxSdk, error) {
+	logx.Infof("打印sdk的状态: %s", s.FormatQxSdkStatus())
 	if s.Cli.Status == qxCli.STATUS_NOT_READY {
 		logx.Errorf("sdk not ready")
 		return s, qxTypes.ErrNotReady
@@ -179,9 +179,9 @@ func (s *Sdk) AuthLogin() (*Sdk, error) {
 	return s, nil
 }
 
-func (s *Sdk) AuthRefresh() (*Sdk, error) {
+func (s *QxSdk) AuthRefresh() (*QxSdk, error) {
 	if s.Cli.Config.Debug {
-		logx.Infof("打印sdk的状态: %s", s.FormatSdkStatus())
+		logx.Infof("打印sdk的状态: %s", s.FormatQxSdkStatus())
 	}
 	// note: 如果链接未准备好，直接返回
 	if s.Cli.Status == qxCli.STATUS_NOT_READY {
@@ -255,12 +255,12 @@ func (s *Sdk) AuthRefresh() (*Sdk, error) {
 	return s, nil
 }
 
-func (s *Sdk) AuthSuccess() {
+func (s *QxSdk) AuthSuccess() {
 	s.Cli.RetryTimes = 0
 	s.Cli.Status = qxCli.STATUS_LOGINED
 }
 
-func (s *Sdk) AuthFail(err error) {
+func (s *QxSdk) AuthFail(err error) {
 	if s.Cli.Config.AutoRetry {
 		s.Cli.RetryTimes++
 	} else {
@@ -269,7 +269,7 @@ func (s *Sdk) AuthFail(err error) {
 	}
 }
 
-func (s *Sdk) FormatSdkStatus() string {
+func (s *QxSdk) FormatQxSdkStatus() string {
 	switch s.Cli.Status {
 	case qxCli.STATUS_READY:
 		return "已就绪"
@@ -281,7 +281,7 @@ func (s *Sdk) FormatSdkStatus() string {
 	return "未知状态"
 }
 
-func (s *Sdk) Destroy() {
+func (s *QxSdk) Destroy() {
 	if s.isShutdown {
 		fmt.Println("SDK already shutdown.")
 		return

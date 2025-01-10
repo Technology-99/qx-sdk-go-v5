@@ -6,7 +6,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/qxConfig"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxConfig"
 	"github.com/Technology-99/third_party/commKey"
 	"github.com/Technology-99/third_party/middleware"
 	"github.com/Technology-99/third_party/sony"

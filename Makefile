@@ -3,10 +3,10 @@ export ACCESS_KEY_ID
 export ACCESS_KEY_SECRET
 
 test:
-	go build -o example easy_example.go && ./example
+	cd example && go build -o test easy_example.go && ./test
 
 build:
-	go build -o example easy_example.go
+	cd example && go build -o test easy_example.go
 
 clean:
-	rm -rf build
+	rm -rf example/test

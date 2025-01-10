@@ -1,7 +1,7 @@
 package main
 
 import (
-	qxSdk "github.com/Technology-99/qx-sdk-go-v5/sdk"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk"
 	"github.com/zeromicro/go-zero/core/logx"
 	"os"
 )
@@ -15,7 +15,7 @@ func main() {
 	AccessKeyId := os.Getenv("ACCESS_KEY_ID")
 	AccessKeySecret := os.Getenv("ACCESS_KEY_SECRET")
 
-	s := qxSdk.NewSdk(AccessKeyId, AccessKeySecret, Endpoint)
+	s := qxSdk.NewQxSdk(AccessKeyId, AccessKeySecret, Endpoint)
 	logx.Infof("打印sdk版本号: %s", s.GetVersion())
 
 	// note: 生成验证码测试

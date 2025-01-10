@@ -1,7 +1,7 @@
 package qxConfig
 
 import (
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/qxTypes"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
 	"time"
 )
 

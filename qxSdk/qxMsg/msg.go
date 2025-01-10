@@ -3,8 +3,8 @@ package qxMsg
 import (
 	"context"
 	"encoding/json"
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/qxCli"
-	"github.com/Technology-99/qx-sdk-go-v5/sdk/qxTypes"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
 	"github.com/Technology-99/third_party/response"
 	"github.com/zeromicro/go-zero/core/logx"
 	"net/http"
