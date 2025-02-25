@@ -1,4 +1,4 @@
-package qxMedia
+package qxStorage
 
 import (
 	"context"
@@ -12,6 +12,7 @@ import (
 
 type (
 	FileService interface {
+		// note: 文件管理部分
 		// Create note: 创建一个文件
 		Create(ctx context.Context, params *qxTypes.AllowCreateModelTmsFile) (result *qxTypes.TmsFileApiCreateResp, err error)
 		// CreateWithOssFrontUpload note: 添加一个文件并通过OSS前端直传
@@ -47,7 +48,7 @@ func NewFileService(cli *qxCli.QxClient) FileService {
 
 func (m *defaultFileService) Create(ctx context.Context, params *qxTypes.AllowCreateModelTmsFile) (result *qxTypes.TmsFileApiCreateResp, err error) {
 	result = &qxTypes.TmsFileApiCreateResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/create", http.MethodPost, &params)
+	reqFn := m.cli.EasyNewRequest(ctx, "/storage/tmsFile/create", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -63,7 +64,7 @@ func (m *defaultFileService) Create(ctx context.Context, params *qxTypes.AllowCr
 
 func (m *defaultFileService) CreateWithOssFrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelTmsFileWithFrontedUpload) (result *qxTypes.TmsFileCommonCreateWithOssFrontUploadResp, err error) {
 	result = &qxTypes.TmsFileCommonCreateWithOssFrontUploadResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/createWithOssFrontedUpload", http.MethodPost, &params)
+	reqFn := m.cli.EasyNewRequest(ctx, "/storage/tmsFile/createWithOssFrontedUpload", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -79,7 +80,7 @@ func (m *defaultFileService) CreateWithOssFrontUpload(ctx context.Context, param
 
 func (m *defaultFileService) CreateWithOssV4FrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelTmsFileWithFrontedUpload) (result *qxTypes.TmsFileApiCreateWithOssV4FrontUploadResp, err error) {
 	result = &qxTypes.TmsFileApiCreateWithOssV4FrontUploadResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/createWithOssV4FrontedUpload", http.MethodPost, &params)
+	reqFn := m.cli.EasyNewRequest(ctx, "/storage/tmsFile/createWithOssV4FrontedUpload", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -95,7 +96,7 @@ func (m *defaultFileService) CreateWithOssV4FrontUpload(ctx context.Context, par
 
 func (m *defaultFileService) Delete(ctx context.Context, params *qxTypes.TmsFileApiFormIdReq) (result *qxTypes.TmsFileApiOKResp, err error) {
 	result = &qxTypes.TmsFileApiOKResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/delete", http.MethodDelete, &params)
+	reqFn := m.cli.EasyNewRequest(ctx, "/storage/tmsFile/delete", http.MethodDelete, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -111,7 +112,7 @@ func (m *defaultFileService) Delete(ctx context.Context, params *qxTypes.TmsFile
 
 func (m *defaultFileService) DeleteMany(ctx context.Context, params *qxTypes.TmsFileApiFormIdsReq) (result *qxTypes.TmsFileApiOKResp, err error) {
 	result = &qxTypes.TmsFileApiOKResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/deleteMany", http.MethodDelete, &params)
+	reqFn := m.cli.EasyNewRequest(ctx, "/storage/tmsFile/deleteMany", http.MethodDelete, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -127,7 +128,7 @@ func (m *defaultFileService) DeleteMany(ctx context.Context, params *qxTypes.Tms
 
 func (m *defaultFileService) Update(ctx context.Context, params *qxTypes.AllowUpdateModelTmsFile) (result *qxTypes.TmsFileApiOKResp, err error) {
 	result = &qxTypes.TmsFileApiOKResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/update", http.MethodPut, &params)
+	reqFn := m.cli.EasyNewRequest(ctx, "/storage/tmsFile/update", http.MethodPut, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -143,7 +144,7 @@ func (m *defaultFileService) Update(ctx context.Context, params *qxTypes.AllowUp
 
 func (m *defaultFileService) UpdateStatus(ctx context.Context, params *qxTypes.AllowUpdateStatusModelTmsFile) (result *qxTypes.TmsFileApiOKResp, err error) {
 	result = &qxTypes.TmsFileApiOKResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/updateStatus", http.MethodPatch, &params)
+	reqFn := m.cli.EasyNewRequest(ctx, "/storage/tmsFile/updateStatus", http.MethodPatch, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -159,7 +160,7 @@ func (m *defaultFileService) UpdateStatus(ctx context.Context, params *qxTypes.A
 
 func (m *defaultFileService) Query(ctx context.Context, params *qxTypes.TmsFileApiFormIdReq) (result *qxTypes.TmsFileCommonQueryResp, err error) {
 	result = &qxTypes.TmsFileCommonQueryResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/query", http.MethodGet, &params)
+	reqFn := m.cli.EasyNewRequest(ctx, "/storage/tmsFile/query", http.MethodGet, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -175,7 +176,7 @@ func (m *defaultFileService) Query(ctx context.Context, params *qxTypes.TmsFileA
 
 func (m *defaultFileService) QueryListWhereIds(ctx context.Context, params *qxTypes.TmsFileApiFormIdsReq) (result *qxTypes.TmsFileCommonQueryListResp, err error) {
 	result = &qxTypes.TmsFileCommonQueryListResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/queryListWhereIds", http.MethodGet, &params)
+	reqFn := m.cli.EasyNewRequest(ctx, "/storage/tmsFile/queryListWhereIds", http.MethodGet, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -191,7 +192,7 @@ func (m *defaultFileService) QueryListWhereIds(ctx context.Context, params *qxTy
 
 func (m *defaultFileService) QueryList(ctx context.Context, params *qxTypes.TmsFileCommonSearchParams) (result *qxTypes.TmsFileCommonQueryListResp, err error) {
 	result = &qxTypes.TmsFileCommonQueryListResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/tmsFile/queryList", http.MethodPost, &params)
+	reqFn := m.cli.EasyNewRequest(ctx, "/storage/tmsFile/queryList", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)

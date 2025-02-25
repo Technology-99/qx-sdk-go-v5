@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxConfig"
-	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxMedia"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxMsg"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxStorage"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
 	"github.com/Technology-99/third_party/response"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -32,8 +32,8 @@ type QxSdk struct {
 
 	// note: 消息服务
 	MsgService qxMsg.MsgService
-	// note: 媒体服务
-	FileService qxMedia.FileService
+	// note: 存储服务
+	StorageService qxStorage.StorageService
 }
 
 func NewQxSdk(AccessKeyId, AccessKeySecret, Endpoint string) *QxSdk {
@@ -49,12 +49,12 @@ func NewQxSdk(AccessKeyId, AccessKeySecret, Endpoint string) *QxSdk {
 	qxClient := qxCli.NewQxClient(ctx, c)
 
 	sdk := &QxSdk{
-		Version:     string(versionFile),
-		Cli:         qxClient,
-		ctx:         ctx,
-		cancel:      cancel,
-		MsgService:  qxMsg.NewMsgService(qxClient),
-		FileService: qxMedia.NewFileService(qxClient),
+		Version:        string(versionFile),
+		Cli:            qxClient,
+		ctx:            ctx,
+		cancel:         cancel,
+		MsgService:     qxMsg.NewMsgService(qxClient),
+		StorageService: qxStorage.NewStorageService(qxClient),
 	}
 	sdk.AutoAuth()
 	return sdk
@@ -89,7 +89,7 @@ func (s *QxSdk) AutoRefresh() *QxSdk {
 					}
 					if _, err := s.AuthRefresh(); err != nil {
 						logx.Errorf("RefreshToken fail: %+v", err)
-						s.AuthFail(err)
+						s.AuthFail(err, "step1")
 						time.Sleep(time.Second)
 						continue
 						//return errs
@@ -118,6 +118,7 @@ func (s *QxSdk) AuthHealthZ() *QxSdk {
 		logx.Infof("sdk healthz success")
 		s.Cli.Status = qxCli.STATUS_READY
 	} else {
+		logx.Errorf("healthz request error: %v", res.Msg)
 		panic(res.Msg)
 	}
 	return s
@@ -142,11 +143,11 @@ func (s *QxSdk) AuthLogin() (*QxSdk, error) {
 				s.Cli.Status = qxCli.STATUS_NOT_READY
 				panic(qxTypes.ErrMaxErrTimes)
 			} else {
-				s.AuthFail(err)
+				s.AuthFail(err, "step2")
 				return s.AuthLogin()
 			}
 		} else {
-			s.AuthFail(err)
+			s.AuthFail(err, "step3")
 		}
 	}
 	res := qxTypes.ApiSignResp{}
@@ -168,11 +169,11 @@ func (s *QxSdk) AuthLogin() (*QxSdk, error) {
 				s.Cli.Status = qxCli.STATUS_NOT_READY
 				panic(qxTypes.ErrMaxErrTimes)
 			} else {
-				s.AuthFail(errors.New(res.Msg))
+				s.AuthFail(errors.New(res.Msg), "step3")
 				return s.AuthLogin()
 			}
 		} else {
-			s.AuthFail(errors.New(res.Msg))
+			s.AuthFail(errors.New(res.Msg), "step4")
 		}
 	}
 
@@ -215,11 +216,11 @@ func (s *QxSdk) AuthRefresh() (*QxSdk, error) {
 					s.Cli.Status = qxCli.STATUS_NOT_READY
 					panic(qxTypes.ErrMaxErrTimes)
 				} else {
-					s.AuthFail(err)
+					s.AuthFail(err, "step5")
 					return s.AuthRefresh()
 				}
 			} else {
-				s.AuthFail(err)
+				s.AuthFail(err, "step6")
 			}
 		}
 		res := qxTypes.ApiRefreshResp{}
@@ -239,11 +240,12 @@ func (s *QxSdk) AuthRefresh() (*QxSdk, error) {
 					s.Cli.Status = qxCli.STATUS_NOT_READY
 					panic(qxTypes.ErrMaxErrTimes)
 				} else {
-					s.AuthFail(errors.New(res.Msg))
+					s.AuthFail(errors.New(res.Msg), "step7")
 					return s.AuthRefresh()
 				}
 			} else {
-				s.AuthFail(errors.New(res.Msg))
+				logx.Infof("api refresh fail: %s", res.Msg)
+				s.AuthFail(errors.New(res.Msg), "step8")
 			}
 		}
 	} else {
@@ -260,8 +262,9 @@ func (s *QxSdk) AuthSuccess() {
 	s.Cli.Status = qxCli.STATUS_LOGINED
 }
 
-func (s *QxSdk) AuthFail(err error) {
+func (s *QxSdk) AuthFail(err error, step string) {
 	if s.Cli.Config.AutoRetry {
+		logx.Infof("sdk auth  step: %s, fail: %v", step, err)
 		s.Cli.RetryTimes++
 	} else {
 		s.Cli.Status = qxCli.STATUS_NOT_READY

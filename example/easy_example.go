@@ -18,6 +18,8 @@ func main() {
 	s := qxSdk.NewQxSdk(AccessKeyId, AccessKeySecret, Endpoint)
 	logx.Infof("打印sdk版本号: %s", s.GetVersion())
 
+	//s.StorageService.StorageBaseService
+
 	// note: 生成验证码测试
 	//genCodeResult, err := s.MsgService.CaptchaGenerate(context.Background(), &msg.ApiCaptchaGenerateReq{Key: "default"})
 	//if err != nil {
@@ -44,5 +46,5 @@ func main() {
 	//
 	//// note: 摧毁sdk，释放资源
 	//s.Destroy()
-	//select {}
+	select {}
 }
