@@ -1,4 +1,4 @@
-package qxStorage
+package qxSas
 
 import (
 	"context"
@@ -30,7 +30,7 @@ func NewFileCollService(cli *qxCli.QxClient) FileCollService {
 
 func (m *defaultFileCollService) Create(ctx context.Context, params *qxTypes.AllowCreateModelTmsFile) (result *qxTypes.TmsFileApiCreateResp, err error) {
 	result = &qxTypes.TmsFileApiCreateResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/storage/tmsFileColl/create", http.MethodPost, &params)
+	reqFn := m.cli.EasyNewRequest(ctx, "/sas/fileColl/create", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)

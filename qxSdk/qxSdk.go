@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxConfig"
-	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxMsg"
-	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxStorage"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxMas"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxSas"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
 	"github.com/Technology-99/third_party/response"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -31,9 +31,9 @@ type QxSdk struct {
 	Cli *qxCli.QxClient
 
 	// note: 消息服务
-	MsgService qxMsg.MsgService
+	MasService qxMas.MasService
 	// note: 存储服务
-	StorageService qxStorage.StorageService
+	SasService qxSas.SasService
 }
 
 func NewQxSdk(AccessKeyId, AccessKeySecret, Endpoint string) *QxSdk {
@@ -49,12 +49,12 @@ func NewQxSdk(AccessKeyId, AccessKeySecret, Endpoint string) *QxSdk {
 	qxClient := qxCli.NewQxClient(ctx, c)
 
 	sdk := &QxSdk{
-		Version:        string(versionFile),
-		Cli:            qxClient,
-		ctx:            ctx,
-		cancel:         cancel,
-		MsgService:     qxMsg.NewMsgService(qxClient),
-		StorageService: qxStorage.NewStorageService(qxClient),
+		Version:    string(versionFile),
+		Cli:        qxClient,
+		ctx:        ctx,
+		cancel:     cancel,
+		MasService: qxMas.NewMsgService(qxClient),
+		SasService: qxSas.NewSasService(qxClient),
 	}
 	sdk.AutoAuth()
 	return sdk
