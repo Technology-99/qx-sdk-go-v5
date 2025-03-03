@@ -7,9 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCms"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxConfig"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCtas"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxMas"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxSas"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTpas"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
 	"github.com/Technology-99/third_party/response"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -34,6 +37,12 @@ type QxSdk struct {
 	MasService qxMas.MasService
 	// note: 存储服务
 	SasService qxSas.SasService
+	// note: 定时任务队列服务
+	CtasService qxCtas.CtasService
+	// note: 第三方聚合服务
+	TpasService qxTpas.TpasService
+	// note: 内容管理服务
+	CmsService qxCms.CmsService
 }
 
 func NewQxSdk(AccessKeyId, AccessKeySecret, Endpoint string) *QxSdk {
@@ -49,12 +58,15 @@ func NewQxSdk(AccessKeyId, AccessKeySecret, Endpoint string) *QxSdk {
 	qxClient := qxCli.NewQxClient(ctx, c)
 
 	sdk := &QxSdk{
-		Version:    string(versionFile),
-		Cli:        qxClient,
-		ctx:        ctx,
-		cancel:     cancel,
-		MasService: qxMas.NewMsgService(qxClient),
-		SasService: qxSas.NewSasService(qxClient),
+		Version:     string(versionFile),
+		Cli:         qxClient,
+		ctx:         ctx,
+		cancel:      cancel,
+		MasService:  qxMas.NewMasService(qxClient),
+		SasService:  qxSas.NewSasService(qxClient),
+		CtasService: qxCtas.NewCtasService(qxClient),
+		TpasService: qxTpas.NewTpasService(qxClient),
+		CmsService:  qxCms.NewCmsService(qxClient),
 	}
 	sdk.AutoAuth()
 	return sdk
@@ -141,7 +153,8 @@ func (s *QxSdk) AuthLogin() (*QxSdk, error) {
 		if s.Cli.Config.AutoRetry {
 			if s.Cli.RetryTimes > s.Cli.Config.MaxRetryTimes {
 				s.Cli.Status = qxCli.STATUS_NOT_READY
-				panic(qxTypes.ErrMaxErrTimes)
+				logx.Errorf("sdk fail max times: %v", err)
+				return nil, err
 			} else {
 				s.AuthFail(err, "step2")
 				return s.AuthLogin()
@@ -167,7 +180,8 @@ func (s *QxSdk) AuthLogin() (*QxSdk, error) {
 		if s.Cli.Config.AutoRetry {
 			if s.Cli.RetryTimes > s.Cli.Config.MaxRetryTimes {
 				s.Cli.Status = qxCli.STATUS_NOT_READY
-				panic(qxTypes.ErrMaxErrTimes)
+				logx.Errorf("sdk fail max times: %v", err)
+				return nil, err
 			} else {
 				s.AuthFail(errors.New(res.Msg), "step3")
 				return s.AuthLogin()
@@ -214,7 +228,8 @@ func (s *QxSdk) AuthRefresh() (*QxSdk, error) {
 			if s.Cli.Config.AutoRetry {
 				if s.Cli.RetryTimes > s.Cli.Config.MaxRetryTimes {
 					s.Cli.Status = qxCli.STATUS_NOT_READY
-					panic(qxTypes.ErrMaxErrTimes)
+					logx.Errorf("sdk fail max times: %v", err)
+					return nil, err
 				} else {
 					s.AuthFail(err, "step5")
 					return s.AuthRefresh()
@@ -238,7 +253,8 @@ func (s *QxSdk) AuthRefresh() (*QxSdk, error) {
 			if s.Cli.Config.AutoRetry {
 				if s.Cli.RetryTimes > s.Cli.Config.MaxRetryTimes {
 					s.Cli.Status = qxCli.STATUS_NOT_READY
-					panic(qxTypes.ErrMaxErrTimes)
+					logx.Errorf("sdk fail max times: %v", err)
+					return nil, err
 				} else {
 					s.AuthFail(errors.New(res.Msg), "step7")
 					return s.AuthRefresh()

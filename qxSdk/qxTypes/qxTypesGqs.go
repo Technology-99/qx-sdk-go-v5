@@ -3,7 +3,7 @@
 
 package qxTypes
 
-type AllowCreateModelTmsFile struct {
+type AllowCreateModelSasFile struct {
 	UploadType   int32  `json:"uploadType,optional"`
 	Key          string `json:"key"`
 	Bucket       string `json:"bucket"`
@@ -15,18 +15,19 @@ type AllowCreateModelTmsFile struct {
 	UploadDir    string `json:"uploadDir,optional"`
 }
 
-type AllowCreateModelTmsFileWithFrontedUpload struct {
-	Key          string `json:"key"`
-	Bucket       string `json:"bucket"`
-	FileName     string `json:"fileName"`
-	FileSize     int64  `json:"fileSize"`
-	MimeType     string `json:"mimeType"`
-	CollectionId uint32 `json:"collectionId,optional"`
-	Remark       string `json:"remark,optional"`
-	UploadDir    string `json:"uploadDir,optional"`
+type AllowCreateModelSasFileWithFrontedUpload struct {
+	Key              string `json:"key"`
+	Bucket           string `json:"bucket"`
+	FileName         string `json:"fileName"`
+	FileSize         int64  `json:"fileSize"`
+	MimeType         string `json:"mimeType"`
+	CollectionId     uint32 `json:"collectionId,optional"`
+	Remark           string `json:"remark,optional"`
+	UploadDir        string `json:"uploadDir,optional"`
+	IsMultipleTenant bool   `json:"isMultipleTenant,optional"`
 }
 
-type AllowUpdateModelTmsFile struct {
+type AllowUpdateModelSasFile struct {
 	Id               uint32   `json:"id"`
 	CollectionId     uint32   `json:"collectionId,optional"`
 	FileName         string   `json:"fileName,optional"`
@@ -37,7 +38,7 @@ type AllowUpdateModelTmsFile struct {
 	UploadSignBody   string   `json:"uploadSignBody,optional"`
 }
 
-type AllowUpdateStatusModelTmsFile struct {
+type AllowUpdateStatusModelSasFile struct {
 	Id               uint32   `json:"id"`
 	Status           int32    `json:"status"`
 	AlternativeCover []string `json:"alternativeCover,optional"`
@@ -129,13 +130,13 @@ type BootstrapResp struct {
 }
 
 type CallbackAliyuncsOssFrontendUploadReq struct {
-	Filename         string `form:"filename,optional"`
-	Height           int32  `form:"height,optional"`
-	Width            int32  `form:"width,optional"`
-	MimeType         string `form:"mimeType,optional"`
-	Size             int64  `form:"size,optional"`
-	UUID             string `path:"uuid,optional"`
-	TenantAndKeyBase string `path:"tenantAndKeyBase,optional"`
+	Filename string `form:"filename,optional"`
+	Height   int32  `form:"height,optional"`
+	Width    int32  `form:"width,optional"`
+	MimeType string `form:"mimeType,optional"`
+	Size     int64  `form:"size,optional"`
+	UUID     string `path:"uuid,optional"`
+	UniqueId string `path:"uniqueId,optional"`
 }
 
 type CallbackAliyuncsOssFrontendUploadResp struct {
@@ -164,7 +165,7 @@ type HealthzResp struct {
 	Data      string `json:"data"`
 }
 
-type ModelTmsFile struct {
+type ModelSasFile struct {
 	Id              uint32   `json:"id"`
 	CreatedAtUnix   int64    `json:"createdAtUnix"`
 	UpdatedAtUnix   int64    `json:"updatedAtUnix"`
@@ -203,6 +204,99 @@ type PingResp struct {
 	Data      string `json:"data"`
 }
 
+type SasFileApiCreateResp struct {
+	Code      int32               `json:"code"`
+	Msg       string              `json:"msg"`
+	RequestID string              `json:"requestId"`
+	Path      string              `json:"path"`
+	Data      SasFileApiJsonIdReq `json:"data"`
+}
+
+type SasFileApiCreateWithOssV4FrontUploadResp struct {
+	Code      int32                                        `json:"code"`
+	Msg       string                                       `json:"msg"`
+	Path      string                                       `json:"path"`
+	RequestID string                                       `json:"requestId"`
+	Data      SasFileApiCreateWithOssV4FrontUploadRespData `json:"data"`
+}
+
+type SasFileApiCreateWithOssV4FrontUploadRespData struct {
+	Id      uint32 `json:"id"`
+	SignUrl string `json:"signUrl"`
+}
+
+type SasFileApiFormIdReq struct {
+	Id uint32 `form:"id"`
+}
+
+type SasFileApiFormIdsReq struct {
+	Ids []uint32 `form:"id"`
+}
+
+type SasFileApiJsonIdReq struct {
+	Id uint32 `json:"id"`
+}
+
+type SasFileApiOKResp struct {
+	Code      int32  `json:"code"`
+	Msg       string `json:"msg"`
+	RequestID string `json:"requestId"`
+	Path      string `json:"path"`
+	Data      string `json:"data"`
+}
+
+type SasFileCommonCreateWithOssFrontUploadResp struct {
+	Code      int32                                         `json:"code"`
+	Msg       string                                        `json:"msg"`
+	Path      string                                        `json:"path"`
+	RequestID string                                        `json:"requestId"`
+	Data      SasFileCommonCreateWithOssFrontUploadRespData `json:"data"`
+}
+
+type SasFileCommonCreateWithOssFrontUploadRespData struct {
+	Id             uint32 `json:"id"`
+	Key            string `json:"key"`
+	OSSAccessKeyId string `json:"ossAccessKeyId"`
+	Policy         string `json:"policy"`
+	Signature      string `json:"signature"`
+	Callback       string `json:"callback"`
+	IsCallback     bool   `json:"isCallback"`
+	Host           string `json:"host"`
+	Domain         string `json:"domain"`
+}
+
+type SasFileCommonQueryListResp struct {
+	Code      int32                          `json:"code"`
+	Msg       string                         `json:"msg"`
+	Path      string                         `json:"path"`
+	RequestID string                         `json:"requestId"`
+	Data      SasFileCommonQueryListRespData `json:"data"`
+}
+
+type SasFileCommonQueryListRespData struct {
+	List     []ModelSasFile `json:"list"`
+	Total    int64          `json:"total"`
+	Page     int32          `json:"page"`
+	PageSize int32          `json:"pageSize"`
+}
+
+type SasFileCommonQueryResp struct {
+	Code      int32        `json:"code"`
+	Msg       string       `json:"msg"`
+	Path      string       `json:"path"`
+	RequestID string       `json:"requestId"`
+	Data      ModelSasFile `json:"data"`
+}
+
+type SasFileCommonSearchParams struct {
+	Page           int32  `json:"page,optional"`
+	PageSize       int32  `json:"pageSize,optional"`
+	StartCreatedAt int64  `json:"startCreatedAt,optional"`
+	EndCreatedAt   int64  `json:"endCreatedAt,optional"`
+	Keyword        string `json:"keyword,optional"`
+	Status         int32  `json:"status,optional"`
+}
+
 type SignResultModel struct {
 	AccessToken      string `json:"accessToken"`
 	AccessExpiresAt  int64  `json:"accessExpiresAt"`
@@ -220,97 +314,4 @@ type TestResp struct {
 	Path      string `json:"path"`
 	RequestID string `json:"requestId"`
 	Data      string `json:"data"`
-}
-
-type TmsFileApiCreateResp struct {
-	Code      int32               `json:"code"`
-	Msg       string              `json:"msg"`
-	RequestID string              `json:"requestId"`
-	Path      string              `json:"path"`
-	Data      TmsFileApiJsonIdReq `json:"data"`
-}
-
-type TmsFileApiCreateWithOssV4FrontUploadResp struct {
-	Code      int32                                        `json:"code"`
-	Msg       string                                       `json:"msg"`
-	Path      string                                       `json:"path"`
-	RequestID string                                       `json:"requestId"`
-	Data      TmsFileApiCreateWithOssV4FrontUploadRespData `json:"data"`
-}
-
-type TmsFileApiCreateWithOssV4FrontUploadRespData struct {
-	Id      uint32 `json:"id"`
-	SignUrl string `json:"signUrl"`
-}
-
-type TmsFileApiFormIdReq struct {
-	Id uint32 `form:"id"`
-}
-
-type TmsFileApiFormIdsReq struct {
-	Ids []uint32 `form:"id"`
-}
-
-type TmsFileApiJsonIdReq struct {
-	Id uint32 `json:"id"`
-}
-
-type TmsFileApiOKResp struct {
-	Code      int32  `json:"code"`
-	Msg       string `json:"msg"`
-	RequestID string `json:"requestId"`
-	Path      string `json:"path"`
-	Data      string `json:"data"`
-}
-
-type TmsFileCommonCreateWithOssFrontUploadResp struct {
-	Code      int32                                         `json:"code"`
-	Msg       string                                        `json:"msg"`
-	Path      string                                        `json:"path"`
-	RequestID string                                        `json:"requestId"`
-	Data      TmsFileCommonCreateWithOssFrontUploadRespData `json:"data"`
-}
-
-type TmsFileCommonCreateWithOssFrontUploadRespData struct {
-	Id             uint32 `json:"id"`
-	Key            string `json:"key"`
-	OSSAccessKeyId string `json:"ossAccessKeyId"`
-	Policy         string `json:"policy"`
-	Signature      string `json:"signature"`
-	Callback       string `json:"callback"`
-	IsCallback     bool   `json:"isCallback"`
-	Host           string `json:"host"`
-	Domain         string `json:"domain"`
-}
-
-type TmsFileCommonQueryListResp struct {
-	Code      int32                          `json:"code"`
-	Msg       string                         `json:"msg"`
-	Path      string                         `json:"path"`
-	RequestID string                         `json:"requestId"`
-	Data      TmsFileCommonQueryListRespData `json:"data"`
-}
-
-type TmsFileCommonQueryListRespData struct {
-	List     []ModelTmsFile `json:"list"`
-	Total    int64          `json:"total"`
-	Page     int32          `json:"page"`
-	PageSize int32          `json:"pageSize"`
-}
-
-type TmsFileCommonQueryResp struct {
-	Code      int32        `json:"code"`
-	Msg       string       `json:"msg"`
-	Path      string       `json:"path"`
-	RequestID string       `json:"requestId"`
-	Data      ModelTmsFile `json:"data"`
-}
-
-type TmsFileCommonSearchParams struct {
-	Page           int32  `json:"page,optional"`
-	PageSize       int32  `json:"pageSize,optional"`
-	StartCreatedAt int64  `json:"startCreatedAt,optional"`
-	EndCreatedAt   int64  `json:"endCreatedAt,optional"`
-	Keyword        string `json:"keyword,optional"`
-	Status         int32  `json:"status,optional"`
 }

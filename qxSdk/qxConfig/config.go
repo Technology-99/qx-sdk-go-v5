@@ -2,6 +2,8 @@ package qxConfig
 
 import (
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
+	"github.com/zeromicro/go-zero/core/logx"
+	"os"
 	"time"
 )
 
@@ -10,10 +12,12 @@ const (
 )
 
 type Config struct {
-	AccessKeyId     string
-	AccessKeySecret string
-	Endpoint        string
-	Protocol        string
+	AccessKeyId              string
+	AccessKeySecret          string
+	Endpoint                 string
+	Protocol                 string
+	EncryptionPrivateKeyPath string
+	EncryptionPrivateKey     string
 
 	AutoRetry        bool          `default:"false"`
 	MaxRetryTimes    int           `default:"3"`
@@ -25,18 +29,29 @@ type Config struct {
 
 func DefaultConfig(AccessKeyId, AccessKeySecret string, Endpoint string) (config *Config) {
 	config = &Config{
-		AutoRetry:        true,
-		MaxRetryTimes:    3,
-		Debug:            false,
-		Timeout:          DefaultTimeout,
-		AutoRefreshToken: true,
-		AccessKeyId:      AccessKeyId,
-		AccessKeySecret:  AccessKeySecret,
-		Endpoint:         Endpoint,
-		Deadline:         5,
-		Protocol:         qxTypes.ProtocolHttps,
+		AutoRetry:                true,
+		MaxRetryTimes:            3,
+		Debug:                    false,
+		Timeout:                  DefaultTimeout,
+		AutoRefreshToken:         true,
+		AccessKeyId:              AccessKeyId,
+		AccessKeySecret:          AccessKeySecret,
+		Endpoint:                 Endpoint,
+		Deadline:                 5,
+		Protocol:                 qxTypes.ProtocolHttps,
+		EncryptionPrivateKeyPath: "",
 	}
-	return
+	if config.EncryptionPrivateKeyPath != "" {
+		encryptionPrivateKeyContent, err := os.ReadFile(config.EncryptionPrivateKeyPath)
+		if err != nil {
+			logx.Infof("encryptionPrivateKey is not exist: %v", err)
+			config.EncryptionPrivateKey = ""
+		} else {
+			logx.Infof("encryptionPrivateKey is exist")
+			config.EncryptionPrivateKey = string(encryptionPrivateKeyContent)
+		}
+	}
+	return config
 }
 
 func NewConfig(c Config) *Config {
@@ -85,5 +100,15 @@ func (c *Config) WithDeadline(Deadline int64) *Config {
 
 func (c *Config) WithProtocol(Protocol string) *Config {
 	c.Protocol = Protocol
+	return c
+}
+
+func (c *Config) WithEncryptionPrivateKey(EncryptionPrivateKey string) *Config {
+	c.EncryptionPrivateKey = EncryptionPrivateKey
+	return c
+}
+
+func (c *Config) WithEncryptionPrivateKeyPath(EncryptionPrivateKeyPath string) *Config {
+	c.EncryptionPrivateKeyPath = EncryptionPrivateKeyPath
 	return c
 }

@@ -11,24 +11,24 @@ import (
 )
 
 type (
-	MasService interface {
+	MasBaseService interface {
 		// note: 生成验证码
 		CaptchaGenerate(ctx context.Context, params *qxTypes.ApiCaptchaGenerateReq) (result *qxTypes.ApiCaptchaGenerateResp, err error)
 		SmsSend(ctx context.Context, params *qxTypes.ApiSmsSendReq) (result *qxTypes.ApiSmsSendResp, err error)
 	}
 
-	defaultMasService struct {
+	defaultMasBaseService struct {
 		cli *qxCli.QxClient
 	}
 )
 
-func NewMsgService(cli *qxCli.QxClient) MasService {
-	return &defaultMasService{
+func NewMsgBaseService(cli *qxCli.QxClient) MasBaseService {
+	return &defaultMasBaseService{
 		cli: cli,
 	}
 }
 
-func (m *defaultMasService) CaptchaGenerate(ctx context.Context, params *qxTypes.ApiCaptchaGenerateReq) (result *qxTypes.ApiCaptchaGenerateResp, err error) {
+func (m *defaultMasBaseService) CaptchaGenerate(ctx context.Context, params *qxTypes.ApiCaptchaGenerateReq) (result *qxTypes.ApiCaptchaGenerateResp, err error) {
 	result = &qxTypes.ApiCaptchaGenerateResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/captcha/generate", http.MethodPost, &params)
 	res, err := reqFn()
@@ -44,7 +44,7 @@ func (m *defaultMasService) CaptchaGenerate(ctx context.Context, params *qxTypes
 	return result, nil
 }
 
-func (m *defaultMasService) SmsSend(ctx context.Context, params *qxTypes.ApiSmsSendReq) (result *qxTypes.ApiSmsSendResp, err error) {
+func (m *defaultMasBaseService) SmsSend(ctx context.Context, params *qxTypes.ApiSmsSendReq) (result *qxTypes.ApiSmsSendResp, err error) {
 	result = &qxTypes.ApiSmsSendResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/sms/send", http.MethodPost, &params)
 	res, err := reqFn()

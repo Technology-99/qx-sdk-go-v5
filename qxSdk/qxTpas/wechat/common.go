@@ -1,4 +1,4 @@
-package qxSas
+package wechat
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 )
 
 type (
-	FileService interface {
+	CommonService interface {
 		// note: 文件管理部分
 		// Create note: 创建一个文件
 		Create(ctx context.Context, params *qxTypes.AllowCreateModelSasFile) (result *qxTypes.SasFileApiCreateResp, err error)
@@ -35,18 +35,18 @@ type (
 		QueryList(ctx context.Context, params *qxTypes.SasFileCommonSearchParams) (result *qxTypes.SasFileCommonQueryListResp, err error)
 	}
 
-	defaultFileService struct {
+	defaultCommonService struct {
 		cli *qxCli.QxClient
 	}
 )
 
-func NewFileService(cli *qxCli.QxClient) FileService {
-	return &defaultFileService{
+func NewCommonService(cli *qxCli.QxClient) CommonService {
+	return &defaultCommonService{
 		cli: cli,
 	}
 }
 
-func (m *defaultFileService) Create(ctx context.Context, params *qxTypes.AllowCreateModelSasFile) (result *qxTypes.SasFileApiCreateResp, err error) {
+func (m *defaultCommonService) Create(ctx context.Context, params *qxTypes.AllowCreateModelSasFile) (result *qxTypes.SasFileApiCreateResp, err error) {
 	result = &qxTypes.SasFileApiCreateResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/create", http.MethodPost, &params)
 	res, err := reqFn()
@@ -62,7 +62,7 @@ func (m *defaultFileService) Create(ctx context.Context, params *qxTypes.AllowCr
 	return result, nil
 }
 
-func (m *defaultFileService) CreateWithOssFrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelSasFileWithFrontedUpload) (result *qxTypes.SasFileCommonCreateWithOssFrontUploadResp, err error) {
+func (m *defaultCommonService) CreateWithOssFrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelSasFileWithFrontedUpload) (result *qxTypes.SasFileCommonCreateWithOssFrontUploadResp, err error) {
 	result = &qxTypes.SasFileCommonCreateWithOssFrontUploadResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/createWithOssFrontedUpload", http.MethodPost, &params)
 	res, err := reqFn()
@@ -78,7 +78,7 @@ func (m *defaultFileService) CreateWithOssFrontUpload(ctx context.Context, param
 	return result, nil
 }
 
-func (m *defaultFileService) CreateWithOssV4FrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelSasFileWithFrontedUpload) (result *qxTypes.SasFileApiCreateWithOssV4FrontUploadResp, err error) {
+func (m *defaultCommonService) CreateWithOssV4FrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelSasFileWithFrontedUpload) (result *qxTypes.SasFileApiCreateWithOssV4FrontUploadResp, err error) {
 	result = &qxTypes.SasFileApiCreateWithOssV4FrontUploadResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/createWithOssV4FrontedUpload", http.MethodPost, &params)
 	res, err := reqFn()
@@ -94,7 +94,7 @@ func (m *defaultFileService) CreateWithOssV4FrontUpload(ctx context.Context, par
 	return result, nil
 }
 
-func (m *defaultFileService) Delete(ctx context.Context, params *qxTypes.SasFileApiFormIdReq) (result *qxTypes.SasFileApiOKResp, err error) {
+func (m *defaultCommonService) Delete(ctx context.Context, params *qxTypes.SasFileApiFormIdReq) (result *qxTypes.SasFileApiOKResp, err error) {
 	result = &qxTypes.SasFileApiOKResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/delete", http.MethodDelete, &params)
 	res, err := reqFn()
@@ -110,7 +110,7 @@ func (m *defaultFileService) Delete(ctx context.Context, params *qxTypes.SasFile
 	return result, nil
 }
 
-func (m *defaultFileService) DeleteMany(ctx context.Context, params *qxTypes.SasFileApiFormIdsReq) (result *qxTypes.SasFileApiOKResp, err error) {
+func (m *defaultCommonService) DeleteMany(ctx context.Context, params *qxTypes.SasFileApiFormIdsReq) (result *qxTypes.SasFileApiOKResp, err error) {
 	result = &qxTypes.SasFileApiOKResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/deleteMany", http.MethodDelete, &params)
 	res, err := reqFn()
@@ -126,7 +126,7 @@ func (m *defaultFileService) DeleteMany(ctx context.Context, params *qxTypes.Sas
 	return result, nil
 }
 
-func (m *defaultFileService) Update(ctx context.Context, params *qxTypes.AllowUpdateModelSasFile) (result *qxTypes.SasFileApiOKResp, err error) {
+func (m *defaultCommonService) Update(ctx context.Context, params *qxTypes.AllowUpdateModelSasFile) (result *qxTypes.SasFileApiOKResp, err error) {
 	result = &qxTypes.SasFileApiOKResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/update", http.MethodPut, &params)
 	res, err := reqFn()
@@ -142,7 +142,7 @@ func (m *defaultFileService) Update(ctx context.Context, params *qxTypes.AllowUp
 	return result, nil
 }
 
-func (m *defaultFileService) UpdateStatus(ctx context.Context, params *qxTypes.AllowUpdateStatusModelSasFile) (result *qxTypes.SasFileApiOKResp, err error) {
+func (m *defaultCommonService) UpdateStatus(ctx context.Context, params *qxTypes.AllowUpdateStatusModelSasFile) (result *qxTypes.SasFileApiOKResp, err error) {
 	result = &qxTypes.SasFileApiOKResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/updateStatus", http.MethodPatch, &params)
 	res, err := reqFn()
@@ -158,7 +158,7 @@ func (m *defaultFileService) UpdateStatus(ctx context.Context, params *qxTypes.A
 	return result, nil
 }
 
-func (m *defaultFileService) Query(ctx context.Context, params *qxTypes.SasFileApiFormIdReq) (result *qxTypes.SasFileCommonQueryResp, err error) {
+func (m *defaultCommonService) Query(ctx context.Context, params *qxTypes.SasFileApiFormIdReq) (result *qxTypes.SasFileCommonQueryResp, err error) {
 	result = &qxTypes.SasFileCommonQueryResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/query", http.MethodGet, &params)
 	res, err := reqFn()
@@ -174,7 +174,7 @@ func (m *defaultFileService) Query(ctx context.Context, params *qxTypes.SasFileA
 	return result, nil
 }
 
-func (m *defaultFileService) QueryListWhereIds(ctx context.Context, params *qxTypes.SasFileApiFormIdsReq) (result *qxTypes.SasFileCommonQueryListResp, err error) {
+func (m *defaultCommonService) QueryListWhereIds(ctx context.Context, params *qxTypes.SasFileApiFormIdsReq) (result *qxTypes.SasFileCommonQueryListResp, err error) {
 	result = &qxTypes.SasFileCommonQueryListResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/queryListWhereIds", http.MethodGet, &params)
 	res, err := reqFn()
@@ -190,7 +190,7 @@ func (m *defaultFileService) QueryListWhereIds(ctx context.Context, params *qxTy
 	return result, nil
 }
 
-func (m *defaultFileService) QueryList(ctx context.Context, params *qxTypes.SasFileCommonSearchParams) (result *qxTypes.SasFileCommonQueryListResp, err error) {
+func (m *defaultCommonService) QueryList(ctx context.Context, params *qxTypes.SasFileCommonSearchParams) (result *qxTypes.SasFileCommonQueryListResp, err error) {
 	result = &qxTypes.SasFileCommonQueryListResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/queryList", http.MethodPost, &params)
 	res, err := reqFn()

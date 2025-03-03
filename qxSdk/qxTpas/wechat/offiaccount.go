@@ -1,4 +1,4 @@
-package qxSas
+package wechat
 
 import (
 	"context"
@@ -11,26 +11,24 @@ import (
 )
 
 type (
-	FileCollService interface {
-		// note: 文件管理部分
-		// Create note: 创建一个文件
+	OffiaccountService interface {
 		Create(ctx context.Context, params *qxTypes.AllowCreateModelSasFile) (result *qxTypes.SasFileApiCreateResp, err error)
 	}
 
-	defaultFileCollService struct {
+	defaultOffiaccountService struct {
 		cli *qxCli.QxClient
 	}
 )
 
-func NewFileCollService(cli *qxCli.QxClient) FileCollService {
-	return &defaultFileCollService{
+func NewOffiaccountService(cli *qxCli.QxClient) OffiaccountService {
+	return &defaultOffiaccountService{
 		cli: cli,
 	}
 }
 
-func (m *defaultFileCollService) Create(ctx context.Context, params *qxTypes.AllowCreateModelSasFile) (result *qxTypes.SasFileApiCreateResp, err error) {
+func (m *defaultOffiaccountService) Create(ctx context.Context, params *qxTypes.AllowCreateModelSasFile) (result *qxTypes.SasFileApiCreateResp, err error) {
 	result = &qxTypes.SasFileApiCreateResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/sas/fileColl/create", http.MethodPost, &params)
+	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/create", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
