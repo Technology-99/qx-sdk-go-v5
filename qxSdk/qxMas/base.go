@@ -30,7 +30,7 @@ func NewMsgBaseService(cli *qxCli.QxClient) MasBaseService {
 
 func (m *defaultMasBaseService) CaptchaGenerate(ctx context.Context, params *qxTypes.ApiCaptchaGenerateReq) (result *qxTypes.ApiCaptchaGenerateResp, err error) {
 	result = &qxTypes.ApiCaptchaGenerateResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/captcha/generate", http.MethodPost, &params)
+	reqFn := m.cli.EasyNewRequest(ctx, "/mas/captcha/generate", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -46,7 +46,7 @@ func (m *defaultMasBaseService) CaptchaGenerate(ctx context.Context, params *qxT
 
 func (m *defaultMasBaseService) SmsSend(ctx context.Context, params *qxTypes.ApiSmsSendReq) (result *qxTypes.ApiSmsSendResp, err error) {
 	result = &qxTypes.ApiSmsSendResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/sms/send", http.MethodPost, &params)
+	reqFn := m.cli.EasyNewRequest(ctx, "/mas/sms/send", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
