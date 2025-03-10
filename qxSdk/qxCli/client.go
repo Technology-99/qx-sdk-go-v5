@@ -7,8 +7,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxConfig"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
 	"github.com/Technology-99/third_party/commKey"
 	"github.com/Technology-99/third_party/middleware"
+	"github.com/Technology-99/third_party/response"
 	"github.com/Technology-99/third_party/sony"
 	"github.com/zeromicro/go-zero/core/logx"
 	"io/ioutil"
@@ -43,6 +45,24 @@ func NewQxClient(ctx context.Context, conf *qxConfig.Config) *QxClient {
 		Context:     ctx,
 		Status:      STATUS_NOT_READY,
 	}
+}
+
+func (cli *QxClient) DownloadPublicKey(ctx context.Context) error {
+	result := &qxTypes.QxClientApiDownPublicKeyResp{}
+	reqFn := cli.EasyNewRequest(ctx, "/tms/downloadPublicKey", http.MethodPost, nil)
+	res, err := reqFn()
+	if err != nil {
+		logx.Errorf("qxClient DownloadPublicKey request error: %v", err)
+		return err
+	}
+	_ = json.Unmarshal(res, &result)
+	if result.Code != response.SUCCESS {
+		logx.Errorf("qiongxiao sdk errlog: DownloadPublicKey fail: %v", result)
+		return fmt.Errorf("qxClient DownloadPublicKey fail: %v", result)
+	}
+	cli.Config.EncryptionPublicKey = result.Data
+
+	return nil
 }
 
 func (cli *QxClient) WithContext(ctx context.Context) *QxClient {
@@ -85,15 +105,20 @@ func (cli *QxClient) NewRequest(
 	go func() {
 		defer close(c) // 保证 goroutine 退出时关闭 channel
 
-		// 将发送体序列化为 JSON
-		sendBodyBt, marshalErr := json.Marshal(sendBody)
-		if marshalErr != nil {
-			err = marshalErr
-			return
+		sendBodyJson := ""
+
+		if sendBody != nil {
+			// 将发送体序列化为 JSON
+			sendBodyBt, marshalErr := json.Marshal(sendBody)
+			if marshalErr != nil {
+				err = marshalErr
+				return
+			}
+			sendBodyJson = string(sendBodyBt)
 		}
 
 		// 使用 context 控制请求
-		req, reqErr := http.NewRequestWithContext(ctx, method, url, bytes.NewBuffer(sendBodyBt))
+		req, reqErr := http.NewRequestWithContext(ctx, method, url, bytes.NewBuffer([]byte(sendBodyJson)))
 		if reqErr != nil {
 			err = reqErr
 			return

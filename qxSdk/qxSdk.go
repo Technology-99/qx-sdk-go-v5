@@ -45,7 +45,30 @@ type QxSdk struct {
 	CmsService qxCms.CmsService
 }
 
-func NewQxSdk(AccessKeyId, AccessKeySecret, Endpoint string) *QxSdk {
+func NewQxSdk(c *qxConfig.Config) *QxSdk {
+	versionFile, err := VersionF.ReadFile("version")
+	if err != nil {
+		panic(err)
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	qxClient := qxCli.NewQxClient(ctx, c)
+	sdk := &QxSdk{
+		Version:     string(versionFile),
+		Cli:         qxClient,
+		ctx:         ctx,
+		cancel:      cancel,
+		MasService:  qxMas.NewMasService(qxClient),
+		SasService:  qxSas.NewSasService(qxClient),
+		CtasService: qxCtas.NewCtasService(qxClient),
+		TpasService: qxTpas.NewTpasService(qxClient),
+		CmsService:  qxCms.NewCmsService(qxClient),
+	}
+	sdk.AutoAuth()
+	return sdk
+}
+
+func NewDefaultQxSdk(AccessKeyId, AccessKeySecret, Endpoint string) *QxSdk {
 
 	c := qxConfig.DefaultConfig(AccessKeyId, AccessKeySecret, Endpoint)
 
@@ -77,6 +100,11 @@ func (s *QxSdk) GetVersion() string {
 
 func (s *QxSdk) AutoAuth() *QxSdk {
 	s, _ = s.AuthHealthZ().AuthLogin()
+	if s.Cli.Config.EncryptionPublicKey == "" {
+		if err := s.Cli.DownloadPublicKey(s.Cli.Context); err != nil {
+			logx.Infof("DownloadPublicKey fail: %v", err)
+		}
+	}
 	go s.AutoRefresh()
 	return s
 }
@@ -124,7 +152,7 @@ func (s *QxSdk) AuthHealthZ() *QxSdk {
 		logx.Errorf("healthz request error: %v", err)
 		return nil
 	}
-	res := qxTypes.HealthzResp{}
+	res := qxTypes.QxClientHealthzResp{}
 	_ = json.Unmarshal(result, &res)
 	if res.Code == response.SUCCESS {
 		logx.Infof("sdk healthz success")
@@ -143,7 +171,7 @@ func (s *QxSdk) AuthLogin() (*QxSdk, error) {
 		return s, qxTypes.ErrNotReady
 	}
 
-	reqFn := s.Cli.EasyNewRequest(s.Cli.Context, "/auth/sign", "POST", &qxTypes.ApiSignReq{
+	reqFn := s.Cli.EasyNewRequest(s.Cli.Context, "/auth/sign", "POST", &qxTypes.QxClientApiSignReq{
 		AccessKey:    s.Cli.Config.AccessKeyId,
 		AccessSecret: s.Cli.Config.AccessKeySecret,
 	})
@@ -163,7 +191,7 @@ func (s *QxSdk) AuthLogin() (*QxSdk, error) {
 			s.AuthFail(err, "step3")
 		}
 	}
-	res := qxTypes.ApiSignResp{}
+	res := qxTypes.QxClientApiSignResp{}
 	_ = json.Unmarshal(result, &res)
 	if res.Code == response.SUCCESS {
 		logx.Infof("sdk api sign success")
@@ -218,7 +246,7 @@ func (s *QxSdk) AuthRefresh() (*QxSdk, error) {
 			logx.Infof("accessToken过期了，过期时间为: %s, 但是refreshToken没过期，过期时间为: %s, 当前时间为: %s", time.Unix(s.Cli.AccessTokenExpires, 0).Format(time.DateTime), time.Unix(s.Cli.RefreshTokenExpires, 0).Format(time.DateTime), nowTime.Format(time.DateTime))
 		}
 		// note: refreshToken没过期，但是accessToken过期了
-		reqFn := s.Cli.EasyNewRequest(s.Cli.Context, "/auth/refresh", "POST", &qxTypes.ApiRefreshReq{
+		reqFn := s.Cli.EasyNewRequest(s.Cli.Context, "/auth/refresh", "POST", &qxTypes.QxClientApiRefreshReq{
 			AccessKey:    s.Cli.Config.AccessKeyId,
 			RefreshToken: s.Cli.RefreshToken,
 		})
@@ -238,7 +266,7 @@ func (s *QxSdk) AuthRefresh() (*QxSdk, error) {
 				s.AuthFail(err, "step6")
 			}
 		}
-		res := qxTypes.ApiRefreshResp{}
+		res := qxTypes.QxClientApiRefreshResp{}
 		_ = json.Unmarshal(result, &res)
 		if res.Code == response.SUCCESS {
 			logx.Infof("api refresh success")

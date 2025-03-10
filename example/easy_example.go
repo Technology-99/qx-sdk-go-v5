@@ -1,7 +1,10 @@
 package main
 
 import (
+	"context"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxConfig"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes/qxTypesCms"
 	"github.com/zeromicro/go-zero/core/logx"
 	"os"
 )
@@ -16,19 +19,21 @@ func main() {
 	logx.Infof("打印sdk接入ID: %s", AccessKeyId)
 	AccessKeySecret := os.Getenv("ACCESS_KEY_SECRET")
 
-	s := qxSdk.NewQxSdk(AccessKeyId, AccessKeySecret, Endpoint)
-	logx.Infof("打印sdk版本号: %s", s.GetVersion())
+	c := qxConfig.DefaultConfig(AccessKeyId, AccessKeySecret, Endpoint)
+
+	s := qxSdk.NewQxSdk(c)
+	logx.Infof("打印sdk版本号: %s, tmp: %s", s.GetVersion(), s.Cli.Config.EncryptionPublicKey)
 
 	//note: rsa消息通讯自动解密
-	//msgResult, err := s.CmsService.TestMsg(context.Background(), &qxTypesCms.CmsTestMsgReq{
-	//	Msg: "我来试试加密和解密",
-	//})
-	//if err != nil {
-	//	logx.Errorf("发送消息失败: %v", err)
-	//	return
-	//}
-	//
-	//logx.Infof("打印消息结果: %s", msgResult)
+	msgResult, err := s.CmsService.TestMsg(context.Background(), &qxTypesCms.CmsTestMsgReq{
+		Msg: "我来试试加密和解密",
+	})
+	if err != nil {
+		logx.Errorf("发送消息失败: %v", err)
+		return
+	}
+
+	logx.Infof("打印消息结果: %s", msgResult)
 
 	// note: 生成验证码测试
 	//genCodeResult, err := s.MsgService.CaptchaGenerate(context.Background(), &msg.ApiCaptchaGenerateReq{Key: "default"})

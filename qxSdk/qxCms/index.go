@@ -7,11 +7,13 @@ import (
 type (
 	CmsService struct {
 		CmsBaseService
+		ArticleService CmsArticleService
 	}
 )
 
 func NewCmsService(cli *qxCli.QxClient) CmsService {
 	return CmsService{
 		CmsBaseService: NewCmsBaseService(cli),
+		ArticleService: NewCmsArticleService(cli),
 	}
 }

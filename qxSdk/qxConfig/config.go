@@ -1,6 +1,7 @@
 package qxConfig
 
 import (
+	"fmt"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
 	"github.com/zeromicro/go-zero/core/logx"
 	"os"
@@ -8,7 +9,9 @@ import (
 )
 
 const (
-	DefaultTimeout = 2000
+	DefaultTimeout                  = 2000
+	defaultEncryptionPrivateKeyPath = "/.qx/qx_rsa_private_key.pem"
+	defaultEncryptionPublicPath     = ""
 )
 
 type Config struct {
@@ -18,6 +21,8 @@ type Config struct {
 	Protocol                 string
 	EncryptionPrivateKeyPath string
 	EncryptionPrivateKey     string
+	EncryptionPublicPath     string
+	EncryptionPublicKey      string
 
 	AutoRetry        bool          `default:"false"`
 	MaxRetryTimes    int           `default:"3"`
@@ -28,6 +33,12 @@ type Config struct {
 }
 
 func DefaultConfig(AccessKeyId, AccessKeySecret string, Endpoint string) (config *Config) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		logx.Infof("get user home dir failed: %v", err)
+		return
+	}
+
 	config = &Config{
 		AutoRetry:                true,
 		MaxRetryTimes:            3,
@@ -39,7 +50,7 @@ func DefaultConfig(AccessKeyId, AccessKeySecret string, Endpoint string) (config
 		Endpoint:                 Endpoint,
 		Deadline:                 5,
 		Protocol:                 qxTypes.ProtocolHttps,
-		EncryptionPrivateKeyPath: "",
+		EncryptionPrivateKeyPath: fmt.Sprintf("%s%s", homeDir, defaultEncryptionPrivateKeyPath),
 	}
 	if config.EncryptionPrivateKeyPath != "" {
 		encryptionPrivateKeyContent, err := os.ReadFile(config.EncryptionPrivateKeyPath)
@@ -49,6 +60,16 @@ func DefaultConfig(AccessKeyId, AccessKeySecret string, Endpoint string) (config
 		} else {
 			logx.Infof("encryptionPrivateKey is exist")
 			config.EncryptionPrivateKey = string(encryptionPrivateKeyContent)
+		}
+	}
+	if config.EncryptionPublicPath != "" {
+		encryptionPublicKeyContent, err := os.ReadFile(config.EncryptionPublicPath)
+		if err != nil {
+			logx.Infof("encryptionPrivateKey is not exist: %v", err)
+			config.EncryptionPublicKey = ""
+		} else {
+			logx.Infof("encryptionPrivateKey is exist")
+			config.EncryptionPublicKey = string(encryptionPublicKeyContent)
 		}
 	}
 	return config
