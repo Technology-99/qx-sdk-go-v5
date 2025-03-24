@@ -1,6 +1,7 @@
 package qxTypes
 
 type QxClientKeyExChangeReq struct {
+	AccessKey string `json:"accessKey"`
 	PublicKey string `json:"publicKey"`
 }
 

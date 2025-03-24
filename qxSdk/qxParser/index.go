@@ -4,14 +4,17 @@ import (
 	"context"
 	"crypto/ecdh"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
 	"github.com/Technology-99/qxLib/qxCodes"
 	"github.com/Technology-99/qxLib/qxCrypto"
 	"github.com/zeromicro/go-zero/core/logx"
+	"golang.org/x/crypto/hkdf"
 	"net/http"
 	"sync"
 )
@@ -49,6 +52,9 @@ func NewQxParser(cli *qxCli.QxClient) QxParser {
 }
 
 func (m *defaultQxParser) KeyExchange() error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
 	privKey, err := ecdh.P256().GenerateKey(rand.Reader)
 	if err != nil {
 		logx.Errorf("无法生成公钥: %s", err)
@@ -62,6 +68,7 @@ func (m *defaultQxParser) KeyExchange() error {
 	logx.Infof("打印一下公钥: %s", tmpPub)
 	// 发送公钥给网关
 	reqFn := m.cli.EasyNewRequest(ctx, "/keyExchange", http.MethodPost, &qxTypes.QxClientKeyExChangeReq{
+		AccessKey: m.cli.AccessKeyId,
 		PublicKey: tmpPub,
 	})
 	res, err := reqFn()
@@ -75,6 +82,32 @@ func (m *defaultQxParser) KeyExchange() error {
 		logx.Errorf("keyexchange  fail: %v", result)
 		return errors.New(result.Msg)
 	}
+	// note: 完成解析器的初始化
+
+	// 解析远端公钥
+	remotePubKey, err := ecdh.P256().NewPublicKey([]byte(result.Data.PublicKey))
+	if err != nil {
+		return fmt.Errorf("解析服务器公钥失败: %v", err)
+	}
+
+	// 计算共享密钥
+	sharedSecret, err := m.localPrivateKey.ECDH(remotePubKey)
+	if err != nil {
+		return fmt.Errorf("计算共享密钥失败: %v", err)
+	}
+
+	// 通过 HKDF 派生 AES-256 密钥
+	hkdf := hkdf.New(sha256.New, sharedSecret, nil, []byte("kms-session-key"))
+	derivedKey := make([]byte, qxCrypto.AES256KeyLen) // 32 字节 AES-256 密钥
+	hkdf.Read(derivedKey)
+
+	// 更新 KMS 客户端状态
+	m.sharedSecretBase = base64.StdEncoding.EncodeToString(sharedSecret)
+	m.remotePublicKey = remotePubKey
+	m.sharedSecretBase = base64.StdEncoding.EncodeToString(sharedSecret)
+	m.deriveAESKeyBase = base64.StdEncoding.EncodeToString(derivedKey)
+	m.deriveAESIvBase = base64.StdEncoding.EncodeToString(sharedSecret[0:qxCrypto.AESGCMIvLen])
+
 	logx.Infof("keyexchange success: %v", result)
 	return nil
 }
