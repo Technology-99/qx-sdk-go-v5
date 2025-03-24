@@ -1,10 +1,11 @@
-package qxTypesCms
+package qxTypesCcs
 
-type CmsTestMsgReq struct {
+type CcsTestMsgReq struct {
+	Key string `json:"key"`
 	Msg string `json:"msg"`
 }
 
-type CmsEncryptResp struct {
+type CcsEncryptResp struct {
 	Code      int32  `json:"code"`
 	Msg       string `json:"msg"`
 	Path      string `json:"path"`
@@ -12,14 +13,14 @@ type CmsEncryptResp struct {
 	Data      string `json:"data"`
 }
 
-type CmsTestMsgResp struct {
+type CcsTestMsgResp struct {
 	Code      int32              `json:"code"`
 	Msg       string             `json:"msg"`
 	Path      string             `json:"path"`
 	RequestID string             `json:"requestId"`
-	Data      CmsTestMsgRespData `json:"data"`
+	Data      CcsTestMsgRespData `json:"data"`
 }
 
-type CmsTestMsgRespData struct {
+type CcsTestMsgRespData struct {
 	Msg string `json:"msg"`
 }

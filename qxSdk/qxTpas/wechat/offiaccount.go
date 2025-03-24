@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
-	"github.com/Technology-99/third_party/response"
+	"github.com/Technology-99/qxLib/qxCodes"
 	"github.com/zeromicro/go-zero/core/logx"
 	"net/http"
 )
@@ -35,7 +35,7 @@ func (m *defaultOffiaccountService) Create(ctx context.Context, params *qxTypes.
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
-	if result.Code != response.SUCCESS {
+	if result.Code != qxCodes.QxEngineStatusOK {
 		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
 		return result, nil
 	}

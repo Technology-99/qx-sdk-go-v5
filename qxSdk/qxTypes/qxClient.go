@@ -1,5 +1,21 @@
 package qxTypes
 
+type QxClientKeyExChangeReq struct {
+	PublicKey string `json:"publicKey"`
+}
+
+type QxClientKeyExChangeResp struct {
+	Code      int32                       `json:"code"`
+	Msg       string                      `json:"msg"`
+	Path      string                      `json:"path"`
+	RequestID string                      `json:"requestId"`
+	Data      QxClientKeyExChangeRespData `json:"data"`
+}
+
+type QxClientKeyExChangeRespData struct {
+	PublicKey string `json:"publicKey"`
+}
+
 type QxClientApiDownPublicKeyResp struct {
 	Code      int32  `json:"code"`
 	Msg       string `json:"msg"`

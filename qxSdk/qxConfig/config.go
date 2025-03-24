@@ -15,14 +15,12 @@ const (
 )
 
 type Config struct {
-	AccessKeyId              string
-	AccessKeySecret          string
-	Endpoint                 string
-	Protocol                 string
+	AccessKeyId     string
+	AccessKeySecret string
+	Endpoint        string
+	Protocol        string
+
 	EncryptionPrivateKeyPath string
-	EncryptionPrivateKey     string
-	EncryptionPublicPath     string
-	EncryptionPublicKey      string
 
 	AutoRetry        bool          `default:"false"`
 	MaxRetryTimes    int           `default:"3"`
@@ -51,26 +49,6 @@ func DefaultConfig(AccessKeyId, AccessKeySecret string, Endpoint string) (config
 		Deadline:                 5,
 		Protocol:                 qxTypes.ProtocolHttps,
 		EncryptionPrivateKeyPath: fmt.Sprintf("%s%s", homeDir, defaultEncryptionPrivateKeyPath),
-	}
-	if config.EncryptionPrivateKeyPath != "" {
-		encryptionPrivateKeyContent, err := os.ReadFile(config.EncryptionPrivateKeyPath)
-		if err != nil {
-			logx.Infof("encryptionPrivateKey is not exist: %v", err)
-			config.EncryptionPrivateKey = ""
-		} else {
-			logx.Infof("encryptionPrivateKey is exist")
-			config.EncryptionPrivateKey = string(encryptionPrivateKeyContent)
-		}
-	}
-	if config.EncryptionPublicPath != "" {
-		encryptionPublicKeyContent, err := os.ReadFile(config.EncryptionPublicPath)
-		if err != nil {
-			logx.Infof("encryptionPrivateKey is not exist: %v", err)
-			config.EncryptionPublicKey = ""
-		} else {
-			logx.Infof("encryptionPrivateKey is exist")
-			config.EncryptionPublicKey = string(encryptionPublicKeyContent)
-		}
 	}
 	return config
 }
@@ -116,20 +94,5 @@ func (c *Config) WithAccessKeySecret(AccessKeySecret string) *Config {
 
 func (c *Config) WithDeadline(Deadline int64) *Config {
 	c.Deadline = Deadline
-	return c
-}
-
-func (c *Config) WithProtocol(Protocol string) *Config {
-	c.Protocol = Protocol
-	return c
-}
-
-func (c *Config) WithEncryptionPrivateKey(EncryptionPrivateKey string) *Config {
-	c.EncryptionPrivateKey = EncryptionPrivateKey
-	return c
-}
-
-func (c *Config) WithEncryptionPrivateKeyPath(EncryptionPrivateKeyPath string) *Config {
-	c.EncryptionPrivateKeyPath = EncryptionPrivateKeyPath
 	return c
 }

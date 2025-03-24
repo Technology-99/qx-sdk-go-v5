@@ -7,11 +7,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxConfig"
-	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
-	"github.com/Technology-99/third_party/commKey"
-	"github.com/Technology-99/third_party/middleware"
-	"github.com/Technology-99/third_party/response"
-	"github.com/Technology-99/third_party/sony"
+	"github.com/Technology-99/qxLib/qxCommonHeader"
+	"github.com/Technology-99/qxLib/qxMiddleware"
+	"github.com/Technology-99/qxLib/qxSony"
 	"github.com/zeromicro/go-zero/core/logx"
 	"io/ioutil"
 	"net/http"
@@ -47,24 +45,6 @@ func NewQxClient(ctx context.Context, conf *qxConfig.Config) *QxClient {
 	}
 }
 
-func (cli *QxClient) DownloadPublicKey(ctx context.Context) error {
-	result := &qxTypes.QxClientApiDownPublicKeyResp{}
-	reqFn := cli.EasyNewRequest(ctx, "/tms/downloadPublicKey", http.MethodPost, nil)
-	res, err := reqFn()
-	if err != nil {
-		logx.Errorf("qxClient DownloadPublicKey request error: %v", err)
-		return err
-	}
-	_ = json.Unmarshal(res, &result)
-	if result.Code != response.SUCCESS {
-		logx.Errorf("qiongxiao sdk errlog: DownloadPublicKey fail: %v", result)
-		return fmt.Errorf("qxClient DownloadPublicKey fail: %v", result)
-	}
-	cli.Config.EncryptionPublicKey = result.Data
-
-	return nil
-}
-
 func (cli *QxClient) WithContext(ctx context.Context) *QxClient {
 	cli.Context = ctx
 	return cli
@@ -72,7 +52,7 @@ func (cli *QxClient) WithContext(ctx context.Context) *QxClient {
 
 // note: 添加将requestID继承到下个服务的能力
 func (cli *QxClient) WithRequestId(requestId string) *QxClient {
-	cli.Context = context.WithValue(cli.Context, middleware.CtxRequestID, requestId)
+	cli.Context = context.WithValue(cli.Context, qxMiddleware.CtxRequestID, requestId)
 	return cli
 }
 
@@ -83,8 +63,11 @@ func (cli *QxClient) WithTimeout(timeout time.Duration) *QxClient {
 
 func (cli *QxClient) EasyNewRequest(ctx context.Context, relativePath string, method string, sendBody interface{}) func() ([]byte, error) {
 	apiUrl := fmt.Sprintf("%s://%s%s%s", cli.Config.Protocol, cli.Config.Endpoint, "/qx/v5/apis", relativePath)
-	logx.Infof("requestID: %s, EasyNewRequest url: %s", cli.Context.Value(middleware.CtxRequestID), apiUrl)
-	//logx.Infof("headers: %v", cli.GenHeaders())
+	if cli.Context.Value(qxMiddleware.CtxRequestID) != nil {
+		logx.Infof("requestID: %s, EasyNewRequest url: %s", cli.Context.Value(qxMiddleware.CtxRequestID), apiUrl)
+	} else {
+		logx.Infof("EasyNewRequest url: %s", apiUrl)
+	}
 	return cli.NewRequest(ctx, apiUrl, method, cli.GenHeaders(), sendBody)
 }
 
@@ -157,17 +140,17 @@ func (cli *QxClient) GenHeaders() *map[string]string {
 	// note: 先处理请求头
 	headers := make(map[string]string)
 	headers["Content-Type"] = "application/json"
-	headers[commKey.HeaderXAuthMethodFor] = "api"
+	headers[qxCommonHeader.HeaderXAuthMethodFor] = "api"
 	// note: 先判断ctx上是否存在requestId
 	if value := cli.Context.Value(KeyRequestId); value != nil {
-		headers[commKey.HeaderXRequestIDFor] = value.(string)
+		headers[qxCommonHeader.HeaderXRequestIDFor] = value.(string)
 	} else {
-		headers[commKey.HeaderXRequestIDFor] = sony.NextId()
+		headers[qxCommonHeader.HeaderXRequestIDFor] = qxSony.NextId()
 	}
 	// note: 再判断是否登录成功
 	if cli.Status == STATUS_LOGINED {
-		headers[commKey.HeaderAuthorization] = "Bearer " + cli.AccessToken
-		headers[commKey.HeaderXAccessKeyFor] = cli.AccessKeyId
+		headers[qxCommonHeader.HeaderAuthorization] = "Bearer " + cli.AccessToken
+		headers[qxCommonHeader.HeaderXAccessKeyFor] = cli.AccessKeyId
 	}
 	return &headers
 }

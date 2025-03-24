@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
-	"github.com/Technology-99/third_party/response"
+	"github.com/Technology-99/qxLib/qxCodes"
 	"github.com/zeromicro/go-zero/core/logx"
 	"net/http"
 )
@@ -55,7 +55,7 @@ func (m *defaultFileService) Create(ctx context.Context, params *qxTypes.AllowCr
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
-	if result.Code != response.SUCCESS {
+	if result.Code != qxCodes.QxEngineStatusOK {
 		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
 		return result, nil
 	}
@@ -71,7 +71,7 @@ func (m *defaultFileService) CreateWithOssFrontUpload(ctx context.Context, param
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
-	if result.Code != response.SUCCESS {
+	if result.Code != qxCodes.QxEngineStatusOK {
 		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
 		return result, nil
 	}
@@ -87,7 +87,7 @@ func (m *defaultFileService) CreateWithOssV4FrontUpload(ctx context.Context, par
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
-	if result.Code != response.SUCCESS {
+	if result.Code != qxCodes.QxEngineStatusOK {
 		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
 		return result, nil
 	}
@@ -103,7 +103,7 @@ func (m *defaultFileService) Delete(ctx context.Context, params *qxTypes.SasFile
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
-	if result.Code != response.SUCCESS {
+	if result.Code != qxCodes.QxEngineStatusOK {
 		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
 		return result, nil
 	}
@@ -119,7 +119,7 @@ func (m *defaultFileService) DeleteMany(ctx context.Context, params *qxTypes.Sas
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
-	if result.Code != response.SUCCESS {
+	if result.Code != qxCodes.QxEngineStatusOK {
 		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
 		return result, nil
 	}
@@ -135,7 +135,7 @@ func (m *defaultFileService) Update(ctx context.Context, params *qxTypes.AllowUp
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
-	if result.Code != response.SUCCESS {
+	if result.Code != qxCodes.QxEngineStatusOK {
 		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
 		return result, nil
 	}
@@ -151,7 +151,7 @@ func (m *defaultFileService) UpdateStatus(ctx context.Context, params *qxTypes.A
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
-	if result.Code != response.SUCCESS {
+	if result.Code != qxCodes.QxEngineStatusOK {
 		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
 		return result, nil
 	}
@@ -167,7 +167,7 @@ func (m *defaultFileService) Query(ctx context.Context, params *qxTypes.SasFileA
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
-	if result.Code != response.SUCCESS {
+	if result.Code != qxCodes.QxEngineStatusOK {
 		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
 		return result, nil
 	}
@@ -183,7 +183,7 @@ func (m *defaultFileService) QueryListWhereIds(ctx context.Context, params *qxTy
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
-	if result.Code != response.SUCCESS {
+	if result.Code != qxCodes.QxEngineStatusOK {
 		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
 		return result, nil
 	}
@@ -199,7 +199,7 @@ func (m *defaultFileService) QueryList(ctx context.Context, params *qxTypes.SasF
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
-	if result.Code != response.SUCCESS {
+	if result.Code != qxCodes.QxEngineStatusOK {
 		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
 		return result, nil
 	}

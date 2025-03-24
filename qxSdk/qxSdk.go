@@ -6,15 +6,16 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCcs"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
-	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCms"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxConfig"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCtas"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxMas"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxParser"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxSas"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTpas"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
-	"github.com/Technology-99/third_party/response"
+	"github.com/Technology-99/qxLib/qxCodes"
 	"github.com/zeromicro/go-zero/core/logx"
 	"sync"
 	"time"
@@ -33,6 +34,11 @@ type QxSdk struct {
 
 	Cli *qxCli.QxClient
 
+	// note: 琼霄解析器
+	QxParser qxParser.QxParser
+
+	// note: 云端配置存储服务
+	CcsService qxCcs.CcsService
 	// note: 消息服务
 	MasService qxMas.MasService
 	// note: 存储服务
@@ -41,8 +47,6 @@ type QxSdk struct {
 	CtasService qxCtas.CtasService
 	// note: 第三方聚合服务
 	TpasService qxTpas.TpasService
-	// note: 内容管理服务
-	CmsService qxCms.CmsService
 }
 
 func NewQxSdk(c *qxConfig.Config) *QxSdk {
@@ -53,16 +57,19 @@ func NewQxSdk(c *qxConfig.Config) *QxSdk {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	qxClient := qxCli.NewQxClient(ctx, c)
+	qxParser := qxParser.NewQxParser(qxClient)
+
 	sdk := &QxSdk{
 		Version:     string(versionFile),
 		Cli:         qxClient,
 		ctx:         ctx,
 		cancel:      cancel,
+		QxParser:    qxParser,
+		CcsService:  qxCcs.NewCcsService(qxClient, qxParser),
 		MasService:  qxMas.NewMasService(qxClient),
 		SasService:  qxSas.NewSasService(qxClient),
 		CtasService: qxCtas.NewCtasService(qxClient),
 		TpasService: qxTpas.NewTpasService(qxClient),
-		CmsService:  qxCms.NewCmsService(qxClient),
 	}
 	sdk.AutoAuth()
 	return sdk
@@ -79,32 +86,30 @@ func NewDefaultQxSdk(AccessKeyId, AccessKeySecret, Endpoint string) *QxSdk {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	qxClient := qxCli.NewQxClient(ctx, c)
+	qxParser := qxParser.NewQxParser(qxClient)
 
 	sdk := &QxSdk{
 		Version:     string(versionFile),
 		Cli:         qxClient,
 		ctx:         ctx,
 		cancel:      cancel,
+		QxParser:    qxParser,
+		CcsService:  qxCcs.NewCcsService(qxClient, qxParser),
 		MasService:  qxMas.NewMasService(qxClient),
 		SasService:  qxSas.NewSasService(qxClient),
 		CtasService: qxCtas.NewCtasService(qxClient),
 		TpasService: qxTpas.NewTpasService(qxClient),
-		CmsService:  qxCms.NewCmsService(qxClient),
 	}
 	sdk.AutoAuth()
 	return sdk
 }
+
 func (s *QxSdk) GetVersion() string {
 	return s.Version
 }
 
 func (s *QxSdk) AutoAuth() *QxSdk {
 	s, _ = s.AuthHealthZ().AuthLogin()
-	if s.Cli.Config.EncryptionPublicKey == "" {
-		if err := s.Cli.DownloadPublicKey(s.Cli.Context); err != nil {
-			logx.Infof("DownloadPublicKey fail: %v", err)
-		}
-	}
 	go s.AutoRefresh()
 	return s
 }
@@ -154,7 +159,7 @@ func (s *QxSdk) AuthHealthZ() *QxSdk {
 	}
 	res := qxTypes.QxClientHealthzResp{}
 	_ = json.Unmarshal(result, &res)
-	if res.Code == response.SUCCESS {
+	if res.Code == qxCodes.QxEngineStatusOK {
 		logx.Infof("sdk healthz success")
 		s.Cli.Status = qxCli.STATUS_READY
 	} else {
@@ -193,7 +198,7 @@ func (s *QxSdk) AuthLogin() (*QxSdk, error) {
 	}
 	res := qxTypes.QxClientApiSignResp{}
 	_ = json.Unmarshal(result, &res)
-	if res.Code == response.SUCCESS {
+	if res.Code == qxCodes.QxEngineStatusOK {
 		logx.Infof("sdk api sign success")
 		if s.Cli.Config.Debug {
 			logx.Infof("sdk api sign result: %s", string(result))
@@ -204,6 +209,8 @@ func (s *QxSdk) AuthLogin() (*QxSdk, error) {
 		s.Cli.RefreshToken = res.Data.RefreshToken
 		s.Cli.RefreshTokenExpires = res.Data.RefreshExpiresAt
 		s.AuthSuccess()
+		// note: 密钥交换
+		s.QxParser.KeyExchange()
 	} else {
 		if s.Cli.Config.AutoRetry {
 			if s.Cli.RetryTimes > s.Cli.Config.MaxRetryTimes {
@@ -268,7 +275,7 @@ func (s *QxSdk) AuthRefresh() (*QxSdk, error) {
 		}
 		res := qxTypes.QxClientApiRefreshResp{}
 		_ = json.Unmarshal(result, &res)
-		if res.Code == response.SUCCESS {
+		if res.Code == qxCodes.QxEngineStatusOK {
 			logx.Infof("api refresh success")
 			if s.Cli.Config.Debug {
 				logx.Infof("sdk api refresh result: %s", string(result))
@@ -277,6 +284,8 @@ func (s *QxSdk) AuthRefresh() (*QxSdk, error) {
 			s.Cli.AccessToken = res.Data.AccessToken
 			s.Cli.AccessTokenExpires = res.Data.AccessExpiresAt
 			s.AuthSuccess()
+			// note: 密钥交换
+			s.QxParser.KeyExchange()
 		} else {
 			if s.Cli.Config.AutoRetry {
 				if s.Cli.RetryTimes > s.Cli.Config.MaxRetryTimes {
