@@ -8,7 +8,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
 	"github.com/Technology-99/qxLib/qxCodes"
@@ -52,20 +51,20 @@ func NewQxParser(cli *qxCli.QxClient) QxParser {
 }
 
 func (m *defaultQxParser) KeyExchange() error {
+	m.status = QxParserStatusInit
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
 	privKey, err := ecdh.P256().GenerateKey(rand.Reader)
 	if err != nil {
 		logx.Errorf("无法生成公钥: %s", err)
+		m.status = QxParserStatusNoInit
 		return err
 	}
 	m.localPrivateKey = privKey
-	m.status = QxParserStatusInit
 	ctx := context.Background()
 
 	tmpPub := base64.StdEncoding.EncodeToString(m.localPrivateKey.PublicKey().Bytes())
-	logx.Infof("打印一下公钥: %s", tmpPub)
 	// 发送公钥给网关
 	reqFn := m.cli.EasyNewRequest(ctx, "/keyExchange", http.MethodPost, &qxTypes.QxClientKeyExChangeReq{
 		AccessKey: m.cli.AccessKeyId,
@@ -74,30 +73,44 @@ func (m *defaultQxParser) KeyExchange() error {
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("keyexchange request error: %v", err)
+		m.status = QxParserStatusNoInit
 		return err
 	}
 	result := qxTypes.QxClientKeyExChangeResp{}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
 		logx.Errorf("keyexchange  fail: %v", result)
+		m.status = QxParserStatusNoInit
 		return errors.New(result.Msg)
 	}
+	logx.Infof("keyexchange request success: %v", result)
 	// note: 完成解析器的初始化
 
-	// 解析远端公钥
-	remotePubKey, err := ecdh.P256().NewPublicKey([]byte(result.Data.PublicKey))
+	tmpPubkey, err := base64.StdEncoding.DecodeString(result.Data.PublicKey)
 	if err != nil {
-		return fmt.Errorf("解析服务器公钥失败: %v", err)
+		logx.Errorf("keyexchange load tmpPubkey error: %v", err)
+		m.status = QxParserStatusNoInit
+		return err
+	}
+
+	// 解析远端公钥
+	remotePubKey, err := ecdh.P256().NewPublicKey([]byte(tmpPubkey))
+	if err != nil {
+		logx.Errorf("keyexchange parse remote public key error: %v", err)
+		m.status = QxParserStatusNoInit
+		return err
 	}
 
 	// 计算共享密钥
 	sharedSecret, err := m.localPrivateKey.ECDH(remotePubKey)
 	if err != nil {
-		return fmt.Errorf("计算共享密钥失败: %v", err)
+		logx.Errorf("keyexchange compute share key error: %v", err)
+		m.status = QxParserStatusNoInit
+		return err
 	}
 
 	// 通过 HKDF 派生 AES-256 密钥
-	hkdf := hkdf.New(sha256.New, sharedSecret, nil, []byte("kms-session-key"))
+	hkdf := hkdf.New(sha256.New, sharedSecret, nil, []byte("key-session-key"))
 	derivedKey := make([]byte, qxCrypto.AES256KeyLen) // 32 字节 AES-256 密钥
 	hkdf.Read(derivedKey)
 
@@ -108,7 +121,9 @@ func (m *defaultQxParser) KeyExchange() error {
 	m.deriveAESKeyBase = base64.StdEncoding.EncodeToString(derivedKey)
 	m.deriveAESIvBase = base64.StdEncoding.EncodeToString(sharedSecret[0:qxCrypto.AESGCMIvLen])
 
-	logx.Infof("keyexchange success: %v", result)
+	m.status = QxParserStatusReady
+
+	logx.Infof("keyexchange success")
 	return nil
 }
 
