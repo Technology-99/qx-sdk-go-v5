@@ -1,15 +1,16 @@
 package main
 
 import (
+	"context"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxConfig"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes/qxTypesKms"
 	"github.com/zeromicro/go-zero/core/logx"
 	"os"
 	"time"
 )
 
 func main() {
-
 	Endpoint := os.Getenv("ENDPOINT")
 	logx.Infof("打印sdk接入点: %s", Endpoint)
 
@@ -19,7 +20,7 @@ func main() {
 	AccessKeySecret := os.Getenv("ACCESS_KEY_SECRET")
 
 	c := qxConfig.DefaultConfig(AccessKeyId, AccessKeySecret, Endpoint)
-	c.Debug = true
+	//c.Debug = true
 
 	s := qxSdk.NewQxSdk(c)
 	logx.Infof("打印sdk版本号: %s, sdk状态: %v", s.GetVersion(), s.FormatQxSdkStatus())
@@ -27,18 +28,20 @@ func main() {
 	time.Sleep(time.Second * 5)
 	logx.Infof("打印sdk版本号: %s, sdk状态: %v", s.GetVersion(), s.FormatQxSdkStatus())
 
-	for true {
-		time.Sleep(time.Second * 5)
-		s.TestMsg()
+	//note: ecdhe 密钥交换通信加密
+	msgResult, err := s.KmsService.TestMsg(context.Background(), &qxTypesKms.KmsTestMsgReq{
+		Msg: "我来试试加密和解密",
+	})
+	if err != nil {
+		logx.Errorf("测试传输加密失败: %v", err)
+		return
 	}
+	logx.Infof("传输解密结果: %v", msgResult.Data)
 
-	//note: rsa消息通讯自动解密
-	//msgResult, err := s.KmsService.TestMsg(context.Background(), &qxTypesKms.KmsTestMsgReq{
-	//	Msg: "我来试试加密和解密",
-	//})
-	//if err != nil {
-	//	logx.Errorf("发送消息失败: %v", err)
-	//	return
+	//
+	//for true {
+	//	time.Sleep(time.Second * 5)
+	//	s.TestMsg()
 	//}
 
 	// note: 生成验证码测试
