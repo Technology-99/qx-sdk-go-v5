@@ -1,7 +1,7 @@
 package qxSas
 
 import (
-	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCtx"
 )
 
 type (
@@ -11,9 +11,9 @@ type (
 	}
 )
 
-func NewSasService(cli *qxCli.QxClient) SasService {
+func NewSasService(qxCtx *qxCtx.QxCtx) SasService {
 	return SasService{
-		FileService:    NewFileService(cli),
-		SasBaseService: NewSasBaseService(cli),
+		FileService:    NewFileService(qxCtx),
+		SasBaseService: NewSasBaseService(qxCtx),
 	}
 }

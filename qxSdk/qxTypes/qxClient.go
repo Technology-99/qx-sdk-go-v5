@@ -1,5 +1,17 @@
 package qxTypes
 
+type QxClientTestMsgReq struct {
+	Msg string `json:"msg"`
+}
+
+type QxClientTestMsgResp struct {
+	Code      int32  `json:"code"`
+	Msg       string `json:"msg"`
+	Path      string `json:"path"`
+	RequestID string `json:"requestId"`
+	Data      string `json:"data"`
+}
+
 type QxClientKeyExChangeReq struct {
 	AccessKey string `json:"accessKey"`
 	PublicKey string `json:"publicKey"`
@@ -15,6 +27,7 @@ type QxClientKeyExChangeResp struct {
 
 type QxClientKeyExChangeRespData struct {
 	PublicKey string `json:"publicKey"`
+	ExpireAt  int64  `json:"expireAt"`
 }
 
 type QxClientApiDownPublicKeyResp struct {

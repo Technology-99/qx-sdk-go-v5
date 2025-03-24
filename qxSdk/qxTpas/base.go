@@ -1,17 +1,19 @@
 package qxTpas
 
-import "github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
+import (
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCtx"
+)
 
 type (
 	TpasBaseService interface {
 	}
 	defaultTpasBaseService struct {
-		cli *qxCli.QxClient
+		qxCtx *qxCtx.QxCtx
 	}
 )
 
-func NewTpasBaseService(cli *qxCli.QxClient) TpasBaseService {
+func NewTpasBaseService(qxCtx *qxCtx.QxCtx) TpasBaseService {
 	return &defaultTpasBaseService{
-		cli: cli,
+		qxCtx: qxCtx,
 	}
 }

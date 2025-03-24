@@ -1,17 +1,19 @@
 package qxSas
 
-import "github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
+import (
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCtx"
+)
 
 type (
 	SasBaseService interface {
 	}
 	defaultSasBaseService struct {
-		cli *qxCli.QxClient
+		qxCtx *qxCtx.QxCtx
 	}
 )
 
-func NewSasBaseService(cli *qxCli.QxClient) SasBaseService {
+func NewSasBaseService(qxCtx *qxCtx.QxCtx) SasBaseService {
 	return &defaultSasBaseService{
-		cli: cli,
+		qxCtx: qxCtx,
 	}
 }

@@ -1,7 +1,7 @@
 package qxCtas
 
 import (
-	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCtx"
 )
 
 type (
@@ -10,8 +10,8 @@ type (
 	}
 )
 
-func NewCtasService(cli *qxCli.QxClient) CtasService {
+func NewCtasService(qxCtx *qxCtx.QxCtx) CtasService {
 	return CtasService{
-		CtasBaseService: NewCtasBaseService(cli),
+		CtasBaseService: NewCtasBaseService(qxCtx),
 	}
 }

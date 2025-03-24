@@ -3,7 +3,7 @@ package qxCtas
 import (
 	"context"
 	"encoding/json"
-	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCtx"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes/qxTypesCtas"
 	"github.com/Technology-99/qxLib/qxCodes"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -15,19 +15,19 @@ type (
 		TestMsg(ctx context.Context, params *qxTypesCtas.CtasTestMsgReq) (result *qxTypesCtas.CtasTestMsgResp, err error)
 	}
 	defaultCtasBaseService struct {
-		cli *qxCli.QxClient
+		qxCtx *qxCtx.QxCtx
 	}
 )
 
-func NewCtasBaseService(cli *qxCli.QxClient) CtasBaseService {
+func NewCtasBaseService(qxCtx *qxCtx.QxCtx) CtasBaseService {
 	return &defaultCtasBaseService{
-		cli: cli,
+		qxCtx: qxCtx,
 	}
 }
 
 func (m *defaultCtasBaseService) TestMsg(ctx context.Context, params *qxTypesCtas.CtasTestMsgReq) (result *qxTypesCtas.CtasTestMsgResp, err error) {
 	result = &qxTypesCtas.CtasTestMsgResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/captcha/generate", http.MethodPost, &params)
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/captcha/generate", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)

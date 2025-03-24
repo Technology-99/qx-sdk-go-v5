@@ -1,7 +1,7 @@
 package qxTpas
 
 import (
-	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCtx"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTpas/wechat"
 )
 
@@ -16,12 +16,12 @@ type (
 	}
 )
 
-func NewTpasService(cli *qxCli.QxClient) TpasService {
+func NewTpasService(qxCtx *qxCtx.QxCtx) TpasService {
 	return TpasService{
-		TpasBaseService: NewTpasBaseService(cli),
+		TpasBaseService: NewTpasBaseService(qxCtx),
 		Wechat: Wechat{
-			CommonService:      wechat.NewCommonService(cli),
-			OffiaccountService: wechat.NewOffiaccountService(cli),
+			CommonService:      wechat.NewCommonService(qxCtx),
+			OffiaccountService: wechat.NewOffiaccountService(qxCtx),
 		},
 	}
 }

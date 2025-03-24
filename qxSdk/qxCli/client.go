@@ -20,7 +20,6 @@ type QxClient struct {
 	*http.Client
 	Config              *qxConfig.Config
 	Context             context.Context
-	Status              int
 	AccessKeyId         string
 	AccessToken         string
 	AccessTokenExpires  int64
@@ -36,13 +35,14 @@ func NewQxClient(ctx context.Context, conf *qxConfig.Config) *QxClient {
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
 	}
-	return &QxClient{
+	cli := &QxClient{
 		Config:      conf,
 		AccessKeyId: conf.AccessKeyId,
 		Client:      httpClient,
 		Context:     ctx,
-		Status:      STATUS_NOT_READY,
+		//Status:      StatusNotReady,
 	}
+	return cli
 }
 
 func (cli *QxClient) WithContext(ctx context.Context) *QxClient {
@@ -59,16 +59,6 @@ func (cli *QxClient) WithRequestId(requestId string) *QxClient {
 func (cli *QxClient) WithTimeout(timeout time.Duration) *QxClient {
 	cli.Client.Timeout = timeout
 	return cli
-}
-
-func (cli *QxClient) EasyNewRequest(ctx context.Context, relativePath string, method string, sendBody interface{}) func() ([]byte, error) {
-	apiUrl := fmt.Sprintf("%s://%s%s%s", cli.Config.Protocol, cli.Config.Endpoint, "/qx/v5/apis", relativePath)
-	if cli.Context.Value(qxMiddleware.CtxRequestID) != nil {
-		logx.Infof("requestID: %s, EasyNewRequest url: %s", cli.Context.Value(qxMiddleware.CtxRequestID), apiUrl)
-	} else {
-		logx.Infof("EasyNewRequest url: %s", apiUrl)
-	}
-	return cli.NewRequest(ctx, apiUrl, method, cli.GenHeaders(), sendBody)
 }
 
 func (cli *QxClient) NewRequest(
@@ -136,21 +126,29 @@ func (cli *QxClient) NewRequest(
 	}
 }
 
+func (cli *QxClient) EasyNewRequest(ctx context.Context, relativePath string, method string, sendBody interface{}) func() ([]byte, error) {
+	apiUrl := fmt.Sprintf("%s://%s%s%s", cli.Config.Protocol, cli.Config.Endpoint, "/qx/v5/apis", relativePath)
+	if cli.Context.Value(qxMiddleware.CtxRequestID) != nil {
+		logx.Infof("requestID: %s, EasyNewRequest url: %s", cli.Context.Value(qxMiddleware.CtxRequestID), apiUrl)
+	} else {
+		logx.Infof("EasyNewRequest url: %s", apiUrl)
+	}
+	return cli.NewRequest(ctx, apiUrl, method, cli.GenHeaders(), sendBody)
+}
+
 func (cli *QxClient) GenHeaders() *map[string]string {
 	// note: 先处理请求头
 	headers := make(map[string]string)
 	headers["Content-Type"] = "application/json"
-	headers[qxCommonHeader.HeaderXAuthMethodFor] = "api"
+	//headers[qxCommonHeader.HeaderXAuthMethodFor] = "api"
 	// note: 先判断ctx上是否存在requestId
-	if value := cli.Context.Value(KeyRequestId); value != nil {
+	if value := cli.Context.Value(qxMiddleware.CtxRequestID); value != nil {
 		headers[qxCommonHeader.HeaderXRequestIDFor] = value.(string)
 	} else {
 		headers[qxCommonHeader.HeaderXRequestIDFor] = qxSony.NextId()
 	}
-	// note: 再判断是否登录成功
-	if cli.Status == STATUS_LOGINED {
-		headers[qxCommonHeader.HeaderAuthorization] = "Bearer " + cli.AccessToken
-		headers[qxCommonHeader.HeaderXAccessKeyFor] = cli.AccessKeyId
-	}
+
+	headers[qxCommonHeader.HeaderAuthorization] = "Bearer " + cli.AccessToken
+	headers[qxCommonHeader.HeaderXAccessKeyFor] = cli.AccessKeyId
 	return &headers
 }

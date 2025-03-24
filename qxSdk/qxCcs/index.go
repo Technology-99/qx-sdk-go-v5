@@ -1,21 +1,17 @@
 package qxCcs
 
 import (
-	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCcs/aes"
-	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
-	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxParser"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCtx"
 )
 
 type (
 	CcsService struct {
 		CcsBaseService
-		AesService aes.AesService
 	}
 )
 
-func NewCcsService(cli *qxCli.QxClient, parser qxParser.QxParser) CcsService {
+func NewCcsService(qxCtx *qxCtx.QxCtx) CcsService {
 	return CcsService{
-		CcsBaseService: NewCcsBaseService(cli, parser),
-		AesService:     aes.NewAesService(cli),
+		CcsBaseService: NewCcsBaseService(qxCtx),
 	}
 }

@@ -3,7 +3,7 @@ package qxCcs
 import (
 	"context"
 	"encoding/json"
-	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCtx"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxParser"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes/qxTypesCcs"
 	"github.com/Technology-99/qxLib/qxCodes"
@@ -16,31 +16,29 @@ type (
 		TestMsg(ctx context.Context, params *qxTypesCcs.CcsTestMsgReq) (result *qxTypesCcs.CcsTestMsgResp, err error)
 	}
 	defaultCcsBaseService struct {
-		cli    *qxCli.QxClient
-		parser qxParser.QxParser
+		qxCtx *qxCtx.QxCtx
 	}
 )
 
-func NewCcsBaseService(cli *qxCli.QxClient, parser qxParser.QxParser) CcsBaseService {
+func NewCcsBaseService(qxCtx *qxCtx.QxCtx) CcsBaseService {
 	return &defaultCcsBaseService{
-		cli:    cli,
-		parser: parser,
+		qxCtx: qxCtx,
 	}
 }
 
 func (m *defaultCcsBaseService) TestMsg(ctx context.Context, params *qxTypesCcs.CcsTestMsgReq) (result *qxTypesCcs.CcsTestMsgResp, err error) {
 	result = &qxTypesCcs.CcsTestMsgResp{}
-	if m.parser.Status() != qxParser.QxParserStatusReady {
+	if m.qxCtx.Parser.Status() != qxParser.QxParserStatusReady {
 		logx.Errorf("ccs-TestMsg parser status not ready")
 		return nil, nil
 	}
-	sendMsg, err := m.parser.Encrypt(params.Msg)
+	sendMsg, err := m.qxCtx.Parser.Encrypt(params.Msg)
 	logx.Infof("打印加密后的消息: %s", sendMsg)
 	if err != nil {
 		logx.Errorf("ccs-TestMsg aes encrypt error: %v", err)
 		return
 	}
-	reqFn := m.cli.EasyNewRequest(ctx, "/ccs/testMsg", http.MethodPost, &qxTypesCcs.CcsTestMsgReq{
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/ccs/testMsg", http.MethodPost, &qxTypesCcs.CcsTestMsgReq{
 		Msg: sendMsg,
 		Key: params.Key,
 	})
@@ -56,7 +54,7 @@ func (m *defaultCcsBaseService) TestMsg(ctx context.Context, params *qxTypesCcs.
 	}
 	// note: 使用aes解密数据
 	aesResultData := qxTypesCcs.CcsTestMsgRespData{}
-	decryptMsg, err := m.parser.Decrypt(result.Msg)
+	decryptMsg, err := m.qxCtx.Parser.Decrypt(result.Msg)
 	if err != nil {
 		logx.Errorf("ccs-TestMsg aes decrypt error: %v", err)
 		return

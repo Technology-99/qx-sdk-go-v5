@@ -1,7 +1,7 @@
 package qxMas
 
 import (
-	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCtx"
 )
 
 type (
@@ -10,8 +10,8 @@ type (
 	}
 )
 
-func NewMasService(cli *qxCli.QxClient) MasService {
+func NewMasService(qxCtx *qxCtx.QxCtx) MasService {
 	return MasService{
-		MasBaseService: NewMsgBaseService(cli),
+		MasBaseService: NewMsgBaseService(qxCtx),
 	}
 }

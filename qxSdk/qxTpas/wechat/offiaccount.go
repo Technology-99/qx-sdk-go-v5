@@ -3,7 +3,7 @@ package wechat
 import (
 	"context"
 	"encoding/json"
-	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCtx"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
 	"github.com/Technology-99/qxLib/qxCodes"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -16,19 +16,19 @@ type (
 	}
 
 	defaultOffiaccountService struct {
-		cli *qxCli.QxClient
+		qxCtx *qxCtx.QxCtx
 	}
 )
 
-func NewOffiaccountService(cli *qxCli.QxClient) OffiaccountService {
+func NewOffiaccountService(qxCtx *qxCtx.QxCtx) OffiaccountService {
 	return &defaultOffiaccountService{
-		cli: cli,
+		qxCtx: qxCtx,
 	}
 }
 
 func (m *defaultOffiaccountService) Create(ctx context.Context, params *qxTypes.AllowCreateModelSasFile) (result *qxTypes.SasFileApiCreateResp, err error) {
 	result = &qxTypes.SasFileApiCreateResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/create", http.MethodPost, &params)
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/create", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)

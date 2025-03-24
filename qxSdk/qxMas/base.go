@@ -3,7 +3,7 @@ package qxMas
 import (
 	"context"
 	"encoding/json"
-	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCtx"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
 	"github.com/Technology-99/qxLib/qxCodes"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -18,19 +18,19 @@ type (
 	}
 
 	defaultMasBaseService struct {
-		cli *qxCli.QxClient
+		qxCtx *qxCtx.QxCtx
 	}
 )
 
-func NewMsgBaseService(cli *qxCli.QxClient) MasBaseService {
+func NewMsgBaseService(qxCtx *qxCtx.QxCtx) MasBaseService {
 	return &defaultMasBaseService{
-		cli: cli,
+		qxCtx: qxCtx,
 	}
 }
 
 func (m *defaultMasBaseService) CaptchaGenerate(ctx context.Context, params *qxTypes.ApiCaptchaGenerateReq) (result *qxTypes.ApiCaptchaGenerateResp, err error) {
 	result = &qxTypes.ApiCaptchaGenerateResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/mas/captcha/generate", http.MethodPost, &params)
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/captcha/generate", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -46,7 +46,7 @@ func (m *defaultMasBaseService) CaptchaGenerate(ctx context.Context, params *qxT
 
 func (m *defaultMasBaseService) SmsSend(ctx context.Context, params *qxTypes.ApiSmsSendReq) (result *qxTypes.ApiSmsSendResp, err error) {
 	result = &qxTypes.ApiSmsSendResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/mas/sms/send", http.MethodPost, &params)
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/sms/send", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)

@@ -3,7 +3,7 @@ package qxSas
 import (
 	"context"
 	"encoding/json"
-	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCtx"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
 	"github.com/Technology-99/qxLib/qxCodes"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -36,19 +36,19 @@ type (
 	}
 
 	defaultFileService struct {
-		cli *qxCli.QxClient
+		qxCtx *qxCtx.QxCtx
 	}
 )
 
-func NewFileService(cli *qxCli.QxClient) FileService {
+func NewFileService(qxCtx *qxCtx.QxCtx) FileService {
 	return &defaultFileService{
-		cli: cli,
+		qxCtx: qxCtx,
 	}
 }
 
 func (m *defaultFileService) Create(ctx context.Context, params *qxTypes.AllowCreateModelSasFile) (result *qxTypes.SasFileApiCreateResp, err error) {
 	result = &qxTypes.SasFileApiCreateResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/create", http.MethodPost, &params)
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/create", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -64,7 +64,7 @@ func (m *defaultFileService) Create(ctx context.Context, params *qxTypes.AllowCr
 
 func (m *defaultFileService) CreateWithOssFrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelSasFileWithFrontedUpload) (result *qxTypes.SasFileCommonCreateWithOssFrontUploadResp, err error) {
 	result = &qxTypes.SasFileCommonCreateWithOssFrontUploadResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/createWithOssFrontedUpload", http.MethodPost, &params)
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/createWithOssFrontedUpload", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -80,7 +80,7 @@ func (m *defaultFileService) CreateWithOssFrontUpload(ctx context.Context, param
 
 func (m *defaultFileService) CreateWithOssV4FrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelSasFileWithFrontedUpload) (result *qxTypes.SasFileApiCreateWithOssV4FrontUploadResp, err error) {
 	result = &qxTypes.SasFileApiCreateWithOssV4FrontUploadResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/createWithOssV4FrontedUpload", http.MethodPost, &params)
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/createWithOssV4FrontedUpload", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -96,7 +96,7 @@ func (m *defaultFileService) CreateWithOssV4FrontUpload(ctx context.Context, par
 
 func (m *defaultFileService) Delete(ctx context.Context, params *qxTypes.SasFileApiFormIdReq) (result *qxTypes.SasFileApiOKResp, err error) {
 	result = &qxTypes.SasFileApiOKResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/delete", http.MethodDelete, &params)
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/delete", http.MethodDelete, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -112,7 +112,7 @@ func (m *defaultFileService) Delete(ctx context.Context, params *qxTypes.SasFile
 
 func (m *defaultFileService) DeleteMany(ctx context.Context, params *qxTypes.SasFileApiFormIdsReq) (result *qxTypes.SasFileApiOKResp, err error) {
 	result = &qxTypes.SasFileApiOKResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/deleteMany", http.MethodDelete, &params)
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/deleteMany", http.MethodDelete, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -128,7 +128,7 @@ func (m *defaultFileService) DeleteMany(ctx context.Context, params *qxTypes.Sas
 
 func (m *defaultFileService) Update(ctx context.Context, params *qxTypes.AllowUpdateModelSasFile) (result *qxTypes.SasFileApiOKResp, err error) {
 	result = &qxTypes.SasFileApiOKResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/update", http.MethodPut, &params)
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/update", http.MethodPut, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -144,7 +144,7 @@ func (m *defaultFileService) Update(ctx context.Context, params *qxTypes.AllowUp
 
 func (m *defaultFileService) UpdateStatus(ctx context.Context, params *qxTypes.AllowUpdateStatusModelSasFile) (result *qxTypes.SasFileApiOKResp, err error) {
 	result = &qxTypes.SasFileApiOKResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/updateStatus", http.MethodPatch, &params)
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/updateStatus", http.MethodPatch, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -160,7 +160,7 @@ func (m *defaultFileService) UpdateStatus(ctx context.Context, params *qxTypes.A
 
 func (m *defaultFileService) Query(ctx context.Context, params *qxTypes.SasFileApiFormIdReq) (result *qxTypes.SasFileCommonQueryResp, err error) {
 	result = &qxTypes.SasFileCommonQueryResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/query", http.MethodGet, &params)
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/query", http.MethodGet, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -176,7 +176,7 @@ func (m *defaultFileService) Query(ctx context.Context, params *qxTypes.SasFileA
 
 func (m *defaultFileService) QueryListWhereIds(ctx context.Context, params *qxTypes.SasFileApiFormIdsReq) (result *qxTypes.SasFileCommonQueryListResp, err error) {
 	result = &qxTypes.SasFileCommonQueryListResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/queryListWhereIds", http.MethodGet, &params)
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/queryListWhereIds", http.MethodGet, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
@@ -192,7 +192,7 @@ func (m *defaultFileService) QueryListWhereIds(ctx context.Context, params *qxTy
 
 func (m *defaultFileService) QueryList(ctx context.Context, params *qxTypes.SasFileCommonSearchParams) (result *qxTypes.SasFileCommonQueryListResp, err error) {
 	result = &qxTypes.SasFileCommonQueryListResp{}
-	reqFn := m.cli.EasyNewRequest(ctx, "/sas/file/queryList", http.MethodPost, &params)
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/queryList", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("healthz request error: %v", err)
