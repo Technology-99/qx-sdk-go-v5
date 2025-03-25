@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxConfig"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes/qxTypesKms"
@@ -37,6 +38,29 @@ func main() {
 		return
 	}
 	logx.Infof("传输解密结果: %v", msgResult.Data)
+
+	//note: 数据加密
+	encryptResult, err := s.KmsService.Skc.KmsAkcEncrypt(context.Background(), &qxTypesKms.KmsSkcEncryptReq{
+		Name:     "id-qx-cas-key-001",
+		BaseData: base64.StdEncoding.EncodeToString([]byte("华仔最帅，帅到爆炸")),
+	})
+	if err != nil {
+		logx.Errorf("测试数据加密失败: %v", err)
+		return
+	}
+	logx.Infof("测试数据加密结果: %v", encryptResult.Data)
+
+	// note: 数据解密
+	decryptResult, err := s.KmsService.Skc.KmsAkcDecrypt(context.Background(), &qxTypesKms.KmsSkcDecryptReq{
+		Name:     "id-qx-cas-key-001",
+		BaseData: encryptResult.Data.BaseData,
+	})
+	if err != nil {
+		logx.Errorf("测试数据解密失败: %v", err)
+		return
+	}
+	realData, _ := base64.StdEncoding.DecodeString(decryptResult.Data.BaseData)
+	logx.Infof("测试数据解密结果: %v", string(realData))
 
 	//
 	//for true {
