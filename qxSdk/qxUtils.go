@@ -61,7 +61,7 @@ func (s *QxSdk) AutoHealthZ() *QxSdk {
 	s.wg.Add(1)
 	go func() {
 		defer s.wg.Done() // 确保任务退出时通知 WaitGroup
-		ticker := time.NewTicker(5 * time.Second)
+		ticker := time.NewTicker(30 * time.Second)
 		defer ticker.Stop()
 
 		for {

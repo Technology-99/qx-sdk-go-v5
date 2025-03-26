@@ -40,7 +40,7 @@ func main() {
 	logx.Infof("传输解密结果: %v", msgResult.Data)
 
 	//note: 数据加密
-	encryptResult, err := s.KmsService.Skc.KmsAkcEncrypt(context.Background(), &qxTypesKms.KmsSkcEncryptReq{
+	encryptResult, err := s.KmsService.Skc.KmsSkcEncrypt(context.Background(), &qxTypesKms.KmsSkcEncryptReq{
 		Name:     "id-qx-cas-key-001",
 		BaseData: base64.StdEncoding.EncodeToString([]byte("华仔最帅，帅到爆炸")),
 	})
@@ -51,7 +51,7 @@ func main() {
 	logx.Infof("测试数据加密结果: %v", encryptResult.Data)
 
 	// note: 数据解密
-	decryptResult, err := s.KmsService.Skc.KmsAkcDecrypt(context.Background(), &qxTypesKms.KmsSkcDecryptReq{
+	decryptResult, err := s.KmsService.Skc.KmsSkcDecrypt(context.Background(), &qxTypesKms.KmsSkcDecryptReq{
 		Name:     "id-qx-cas-key-001",
 		BaseData: encryptResult.Data.BaseData,
 	})
