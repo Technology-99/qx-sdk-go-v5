@@ -18,41 +18,41 @@ func (s *QxSdk) TestMsg() *QxSdk {
 	msg := fmt.Sprintf("test msg: %s", time.Now().Format(time.DateTime))
 	encryptMsg, err := s.QxCtx.Parser.Encrypt(msg)
 	if err != nil {
-		logx.Errorf("qx sdk encrypt error: %v", err)
+		logx.Errorf("qx sdk: encrypt error: %v", err)
 		return nil
 	}
 	if s.QxCtx.Cli.Config.Debug {
-		logx.Infof("qx sdk encrypt msg: %s", encryptMsg)
+		logx.Infof("qx sdk: encrypt msg: %s", encryptMsg)
 	}
 	reqFn := s.QxCtx.Cli.EasyNewRequest(s.QxCtx.Cli.Context, "/test", "POST", qxTypes.QxClientTestMsgReq{
 		Msg: encryptMsg,
 	})
 	result, err := reqFn()
 	if err != nil {
-		logx.Errorf("qx sdk testMsg request error: %v", err)
+		logx.Errorf("qx sdk: testMsg request error: %v", err)
 		return nil
 	}
 	if s.QxCtx.Cli.Config.Debug {
-		logx.Infof("qx sdk testMsg result: %s", string(result))
+		logx.Infof("qx sdk: testMsg result: %s", string(result))
 	}
 	res := qxTypes.QxClientTestMsgResp{}
 	_ = json.Unmarshal(result, &res)
 	if res.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qx sdk testMsg request error: %v", res.Msg)
+		logx.Errorf("qx sdk: testMsg request error: %v", res.Msg)
 	}
 	if s.QxCtx.Cli.Config.Debug {
-		logx.Infof("qx sdk testMsg res: %v", res)
+		logx.Infof("qx sdk: testMsg res: %v", res)
 	}
 	decryptMsg, err := s.QxCtx.Parser.Decrypt(res.Data)
 	if err != nil {
-		logx.Errorf("qx sdk encrypt error: %v", err)
+		logx.Errorf("qx sdk: encrypt error: %v", err)
 		return nil
 	}
 
 	if s.QxCtx.Cli.Config.Debug {
-		logx.Infof("qx sdk testMsg decrypt data %s", string(decryptMsg))
+		logx.Infof("qx sdk: testMsg decrypt data %s", string(decryptMsg))
 	}
-	logx.Infof("qx sdk encrypt msg: %s", decryptMsg)
+	logx.Infof("qx sdk: encrypt msg: %s", decryptMsg)
 	return s
 }
 
@@ -69,7 +69,7 @@ func (s *QxSdk) AutoHealthZ() *QxSdk {
 			case <-ticker.C:
 				s.HealthZ()
 			case <-s.ctx.Done():
-				fmt.Println("healthz stopped.")
+				fmt.Println("qx sdk: healthz stopped.")
 				return
 			}
 		}
@@ -90,15 +90,15 @@ func (s *QxSdk) AutoRefresh() *QxSdk {
 				select {
 				case <-ticker.C:
 					if s.QxCtx.Cli.Config.Debug {
-						logx.Debugf("qx sdk auto refresh")
+						logx.Debugf("qx sdk: auto refresh")
 					}
 					if _, err := s.AuthRefresh(); err != nil {
-						logx.Errorf("qx sdk auto refresh fail: %+v", err)
+						logx.Errorf("qx sdk: auto refresh fail: %+v", err)
 						time.Sleep(time.Second)
 						continue
 					}
 				case <-s.ctx.Done():
-					fmt.Println("qx sdk auto refresh stopped.")
+					fmt.Println("qx sdk: auto refresh stopped.")
 					return
 				}
 			}
@@ -118,15 +118,15 @@ func (s *QxSdk) AutoKeyExChange() *QxSdk {
 			select {
 			case <-ticker.C:
 				if s.QxCtx.Cli.Config.Debug {
-					logx.Debugf("qx sdk auto key exchange")
+					logx.Debugf("qx sdk: auto key exchange")
 				}
 				if _, err := s.KeyExChange(); err != nil {
-					logx.Errorf("qx sdk auto key exchange fail: %+v", err)
+					logx.Errorf("qx sdk: auto key exchange fail: %+v", err)
 					time.Sleep(time.Second)
 					continue
 				}
 			case <-s.ctx.Done():
-				fmt.Println("qx sdk auto refresh stopped.")
+				fmt.Println("qx sdk: auto refresh stopped.")
 				return
 			}
 		}

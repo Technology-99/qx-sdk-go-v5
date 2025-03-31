@@ -169,16 +169,16 @@ func (s *QxSdk) AuthLogin() (*QxSdk, error) {
 		if s.QxCtx.Cli.Config.AutoRetry {
 			if s.QxCtx.Cli.RetryTimes > s.QxCtx.Cli.Config.MaxRetryTimes {
 				s.Status = SdkStatusSignMaxTimes
-				logx.Errorf("qx sdk fail max times: %v", err)
+				logx.Errorf("qx sdk: fail max times: %v", err)
 				return nil, err
 			} else {
-				logx.Errorf("qx sdk sign failed, next try, err: %v, ", err)
+				logx.Errorf("qx sdk: sign failed, next try, err: %v, ", err)
 				s.QxCtx.Cli.RetryTimes++
 				return s.AuthLogin()
 			}
 		} else {
 			s.Status = SdkStatusLoginFailed
-			logx.Infof("qx sdk sign failed err: %v", err)
+			logx.Infof("qx sdk: sign failed err: %v", err)
 			return nil, err
 		}
 	}
@@ -188,23 +188,23 @@ func (s *QxSdk) AuthLogin() (*QxSdk, error) {
 		if s.QxCtx.Cli.Config.AutoRetry {
 			if s.QxCtx.Cli.RetryTimes > s.QxCtx.Cli.Config.MaxRetryTimes {
 				s.Status = SdkStatusSignMaxTimes
-				logx.Errorf("sdk fail max times: %v", err)
+				logx.Errorf("qx sdk: fail max times: %v", err)
 				return nil, err
 			} else {
-				logx.Errorf("qx sdk sign failed err: %v", err)
+				logx.Errorf("qx sdk: sign failed err: %v", err)
 				s.QxCtx.Cli.RetryTimes++
 				return s.AuthLogin()
 			}
 		} else {
 			s.Status = SdkStatusLoginFailed
-			logx.Infof("qx sdk sign failed err: %v", res.Msg)
+			logx.Infof("qx sdk: sign failed err: %v", res.Msg)
 			return nil, err
 		}
 	}
 
-	logx.Infof("sdk api sign success")
+	logx.Infof("qx sdk: api sign success")
 	if s.QxCtx.Cli.Config.Debug {
-		logx.Infof("sdk api sign result: %s", string(result))
+		logx.Infof("qx sdk: api sign result: %s", string(result))
 	}
 	// note: 记录access token
 	s.QxCtx.Cli.AccessToken = res.Data.AccessToken
@@ -222,7 +222,7 @@ func (s *QxSdk) AuthLogin() (*QxSdk, error) {
 func (s *QxSdk) AuthRefresh() (*QxSdk, error) {
 	// note: 如果sdk未准备好，直接返回
 	if s.Status < SdkStatusRemoteHealthy {
-		logx.Errorf("sdk not ready")
+		logx.Errorf("qx sdk: not ready")
 		return s, qxErrs.ErrNotReady
 	}
 
@@ -231,14 +231,14 @@ func (s *QxSdk) AuthRefresh() (*QxSdk, error) {
 	// note: 判断accessToken过期了没
 	if (s.QxCtx.Cli.AccessTokenExpires - s.QxCtx.Cli.Config.Deadline) >= nowTime.Unix() {
 		if s.QxCtx.Cli.Config.Debug {
-			logx.Infof("accessToken没过期，过期时间为: %s, 当前时间为: %s", time.Unix(s.QxCtx.Cli.AccessTokenExpires, 0).Format(time.DateTime), nowTime.Format(time.DateTime))
+			logx.Infof("qx sdk:accessToken没过期，过期时间为: %s, 当前时间为: %s", time.Unix(s.QxCtx.Cli.AccessTokenExpires, 0).Format(time.DateTime), nowTime.Format(time.DateTime))
 		}
 		// note: 没过期，直接返回
 		return s, nil
 	}
 	if (s.QxCtx.Cli.RefreshTokenExpires - s.QxCtx.Cli.Config.Deadline) >= nowTime.Unix() {
 		if s.QxCtx.Cli.Config.Debug {
-			logx.Infof("accessToken过期了，过期时间为: %s, 但是refreshToken没过期，过期时间为: %s, 当前时间为: %s", time.Unix(s.QxCtx.Cli.AccessTokenExpires, 0).Format(time.DateTime), time.Unix(s.QxCtx.Cli.RefreshTokenExpires, 0).Format(time.DateTime), nowTime.Format(time.DateTime))
+			logx.Infof("qx sdk:accessToken过期了，过期时间为: %s, 但是refreshToken没过期，过期时间为: %s, 当前时间为: %s", time.Unix(s.QxCtx.Cli.AccessTokenExpires, 0).Format(time.DateTime), time.Unix(s.QxCtx.Cli.RefreshTokenExpires, 0).Format(time.DateTime), nowTime.Format(time.DateTime))
 		}
 		// note: refreshToken没过期，但是accessToken过期了
 		reqFn := s.EasyUnLoginRequest(s.QxCtx.Cli.Context, "/auth/refresh", "POST", &qxTypes.QxClientApiRefreshReq{
@@ -247,20 +247,20 @@ func (s *QxSdk) AuthRefresh() (*QxSdk, error) {
 		})
 		result, err := reqFn()
 		if err != nil {
-			logx.Errorf("api refresh error: %v", err)
+			logx.Errorf("qx sdk: api refresh error: %v", err)
 			if s.QxCtx.Cli.Config.AutoRetry {
 				if s.QxCtx.Cli.RetryTimes > s.QxCtx.Cli.Config.MaxRetryTimes {
 					s.Status = SdkStatusLoginFailed
-					logx.Errorf("sdk fail max times: %v", err)
+					logx.Errorf("qx sdk: sdk fail max times: %v", err)
 					return nil, err
 				} else {
-					logx.Errorf("qx sdk refresh failed, next try, err: %v, ", err)
+					logx.Errorf("qx sdk: qx sdk refresh failed, next try, err: %v, ", err)
 					s.QxCtx.Cli.RetryTimes++
 					return s.AuthRefresh()
 				}
 			} else {
 				s.Status = SdkStatusLoginFailed
-				logx.Infof("qx sdk refresh failed err: %v", err)
+				logx.Infof("qx sdk: refresh failed err: %v", err)
 				return nil, err
 			}
 		}
@@ -270,23 +270,23 @@ func (s *QxSdk) AuthRefresh() (*QxSdk, error) {
 			if s.QxCtx.Cli.Config.AutoRetry {
 				if s.QxCtx.Cli.RetryTimes > s.QxCtx.Cli.Config.MaxRetryTimes {
 					s.Status = SdkStatusSignMaxTimes
-					logx.Errorf("sdk fail max times: %v", err)
+					logx.Errorf("qx sdk: fail max times: %v", err)
 					return nil, err
 				} else {
-					logx.Errorf("qx sdk refresh failed err: %v", err)
+					logx.Errorf("qx sdk: refresh failed err: %v", err)
 					s.QxCtx.Cli.RetryTimes++
 					return s.AuthRefresh()
 				}
 
 			} else {
 				s.Status = SdkStatusLoginFailed
-				logx.Infof("qx sdk refresh failed err: %v", res.Msg)
+				logx.Infof("qx sdk: refresh failed err: %v", res.Msg)
 				return nil, err
 			}
 		}
 
 		if s.QxCtx.Cli.Config.Debug {
-			logx.Infof("sdk api refresh result: %s", string(result))
+			logx.Infof("qx sdk: refresh result: %s", string(result))
 		}
 		// note: 记录access token
 		s.QxCtx.Cli.AccessToken = res.Data.AccessToken
@@ -298,7 +298,7 @@ func (s *QxSdk) AuthRefresh() (*QxSdk, error) {
 		}
 	} else {
 		// note: refreshToken过期了
-		logx.Errorf("refreshToken 过期了")
+		logx.Errorf("qx sdk: refreshToken 过期了")
 		if s.Status <= SdkStatusRemoteHealthy {
 			s.Status = SdkStatusRemoteHealthy
 		}
@@ -310,7 +310,7 @@ func (s *QxSdk) AuthRefresh() (*QxSdk, error) {
 func (s *QxSdk) KeyExChange() (*QxSdk, error) {
 	// note: 如果sdk未准备好，直接返回
 	if s.Status < SdkStatusLogined {
-		logx.Errorf("sdk not logined")
+		logx.Errorf("qx sdk: sdk not logined")
 		return s, qxErrs.ErrNotLogined
 	}
 
@@ -319,13 +319,13 @@ func (s *QxSdk) KeyExChange() (*QxSdk, error) {
 		// note: 判断客户端证书过期了没
 		if (s.QxCtx.Parser.ExpireAt().Unix() - s.QxCtx.Cli.Config.Deadline) >= nowTime.Unix() {
 			if s.QxCtx.Cli.Config.Debug {
-				logx.Infof("客户端证书没过期，过期时间为: %s, 当前时间为: %s", s.QxCtx.Parser.ExpireAt().Format(time.DateTime), nowTime.Format(time.DateTime))
+				logx.Infof("qx sdk: 客户端证书没过期，过期时间为: %s, 当前时间为: %s", s.QxCtx.Parser.ExpireAt().Format(time.DateTime), nowTime.Format(time.DateTime))
 			}
 			// note: 没过期，直接返回
 			return s, nil
 		}
 		if s.QxCtx.Cli.Config.Debug {
-			logx.Infof("客户端证书过期了，过期时间为: %s", s.QxCtx.Parser.ExpireAt().Format(time.DateTime))
+			logx.Infof("qx sdk: 客户端证书过期了，过期时间为: %s", s.QxCtx.Parser.ExpireAt().Format(time.DateTime))
 		}
 	}
 
@@ -337,7 +337,7 @@ func (s *QxSdk) KeyExChange() (*QxSdk, error) {
 	// note: 客户端生成一张证书
 	privKey, err := ecdh.P256().GenerateKey(rand.Reader)
 	if err != nil {
-		logx.Errorf("sdk generate key err: %v", err)
+		logx.Errorf("qx sdk: sdk generate key err: %v", err)
 		return s, err
 	}
 	if s.Status <= SdkStatusKeyExChanging {
@@ -351,34 +351,34 @@ func (s *QxSdk) KeyExChange() (*QxSdk, error) {
 	})
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("keyexchange request error: %v", err)
+		logx.Errorf("qx sdk: keyexchange request error: %v", err)
 		return s, err
 	}
 	result := qxTypes.QxClientKeyExChangeResp{}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("keyexchange  fail: %v", result)
+		logx.Errorf("qx sdk: keyexchange  fail: %v", result)
 		return s, errors.New(result.Msg)
 	}
 	if s.QxCtx.Cli.Config.Debug {
-		logx.Infof("keyexchange request success: %v", result)
+		logx.Infof("qx sdk: keyexchange request success: %v", result)
 	}
 
 	// note: 完成解析器的初始化
 	tmpPubkey, err := base64.StdEncoding.DecodeString(result.Data.PublicKey)
 	if err != nil {
-		logx.Errorf("keyexchange load tmpPubkey error: %v", err)
+		logx.Errorf("qx sdk: keyexchange load tmpPubkey error: %v", err)
 		return nil, err
 	}
 	// 解析远端公钥
 	remotePubKey, err := ecdh.P256().NewPublicKey(tmpPubkey)
 	if err != nil {
-		logx.Errorf("keyexchange parse remote public key error: %v", err)
+		logx.Errorf("qx sdk: keyexchange parse remote public key error: %v", err)
 		return nil, err
 	}
 	expireAt := time.Unix(result.Data.ExpireAt, 0)
 	if err = s.QxCtx.Parser.Init(privKey, remotePubKey, expireAt); err != nil {
-		logx.Errorf("qx sdk parser init err: %v", err)
+		logx.Errorf("qx sdk: qx sdk parser init err: %v", err)
 		return nil, err
 	}
 	if s.Status <= SdkStatusReady {
