@@ -56,9 +56,9 @@ func (m *defaultQxBaseService) Zones(ctx context.Context, params *qxTypes.ZonesR
 	relativePath := ""
 	if params.Lang != "" {
 		v, _ := query.Values(params)
-		relativePath = fmt.Sprintf("/codes?%s", v.Encode())
+		relativePath = fmt.Sprintf("/zones?%s", v.Encode())
 	} else {
-		relativePath = "/codes"
+		relativePath = "/zones"
 	}
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, relativePath, http.MethodGet, nil)
 	res, err := reqFn()
