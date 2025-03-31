@@ -30,8 +30,14 @@ func NewQxBaseService(qxCtx *qxCtx.QxCtx) QxBaseService {
 
 func (m *defaultQxBaseService) Codes(ctx context.Context, params *qxTypes.CodesReq) (result *qxTypes.CodesResp, err error) {
 	result = &qxTypes.CodesResp{}
-	v, _ := query.Values(params)
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, fmt.Sprintf("/codes?%s", v.Encode()), http.MethodGet, &params)
+	relativePath := ""
+	if params.Lang != "" || params.Svc != "" {
+		v, _ := query.Values(params)
+		relativePath = fmt.Sprintf("/codes?%s", v.Encode())
+	} else {
+		relativePath = "/codes"
+	}
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, relativePath, http.MethodGet, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
@@ -47,8 +53,14 @@ func (m *defaultQxBaseService) Codes(ctx context.Context, params *qxTypes.CodesR
 
 func (m *defaultQxBaseService) Zones(ctx context.Context, params *qxTypes.ZonesReq) (result *qxTypes.ZonesResp, err error) {
 	result = &qxTypes.ZonesResp{}
-	v, _ := query.Values(params)
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, fmt.Sprintf("/zones?%s", v.Encode()), http.MethodGet, nil)
+	relativePath := ""
+	if params.Lang != "" {
+		v, _ := query.Values(params)
+		relativePath = fmt.Sprintf("/codes?%s", v.Encode())
+	} else {
+		relativePath = "/codes"
+	}
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, relativePath, http.MethodGet, nil)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
