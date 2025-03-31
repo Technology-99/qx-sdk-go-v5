@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	"encoding/base64"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxConfig"
-	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes/qxTypesKms"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxLang"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
 	"github.com/zeromicro/go-zero/core/logx"
 	"os"
 	"time"
@@ -29,38 +29,56 @@ func main() {
 	time.Sleep(time.Second * 5)
 	logx.Infof("打印sdk版本号: %s, sdk状态: %v", s.GetVersion(), s.FormatQxSdkStatus())
 
+	//codes, err := s.Codes(context.Background(), &qxTypes.CodesReq{Lang: qxLang.LangEnUS, Svc: "QxEngine"})
+	//if err != nil {
+	//	logx.Errorf("测试获取错误码表失败: %v", err)
+	//	return
+	//}
+	//for _, code := range codes.Data.List {
+	//	logx.Infof("code: %v, num: %v, msg: %v", code.Code, code.Num, code.Msg)
+	//}
+
+	zones, err := s.Zones(context.Background(), &qxTypes.ZonesReq{Lang: qxLang.LangEnUS})
+	if err != nil {
+		logx.Errorf("测试获取区号表失败: %v", err)
+		return
+	}
+	for _, code := range zones.Data.List {
+		logx.Infof("code: %v, label: %v, area: %v", code.Code, code.Label, code.Area)
+	}
+
 	//note: ecdhe 密钥交换通信加密
-	msgResult, err := s.KmsService.TestMsg(context.Background(), &qxTypesKms.KmsTestMsgReq{
-		Msg: "我来试试加密和解密",
-	})
-	if err != nil {
-		logx.Errorf("测试传输加密失败: %v", err)
-		return
-	}
-	logx.Infof("传输解密结果: %v", msgResult.Data)
-
-	//note: 数据加密
-	encryptResult, err := s.KmsService.Skc.KmsSkcEncrypt(context.Background(), &qxTypesKms.KmsSkcEncryptReq{
-		Name:     "id-qx-cas-key-001",
-		BaseData: base64.StdEncoding.EncodeToString([]byte("华仔最帅，帅到爆炸")),
-	})
-	if err != nil {
-		logx.Errorf("测试数据加密失败: %v", err)
-		return
-	}
-	logx.Infof("测试数据加密结果: %v", encryptResult.Data)
-
-	// note: 数据解密
-	decryptResult, err := s.KmsService.Skc.KmsSkcDecrypt(context.Background(), &qxTypesKms.KmsSkcDecryptReq{
-		Name:     "id-qx-cas-key-001",
-		BaseData: encryptResult.Data.BaseData,
-	})
-	if err != nil {
-		logx.Errorf("测试数据解密失败: %v", err)
-		return
-	}
-	realData, _ := base64.StdEncoding.DecodeString(decryptResult.Data.BaseData)
-	logx.Infof("测试数据解密结果: %v", string(realData))
+	//msgResult, err := s.KmsService.TestMsg(context.Background(), &qxTypesKms.KmsTestMsgReq{
+	//	Msg: "我来试试加密和解密",
+	//})
+	//if err != nil {
+	//	logx.Errorf("测试传输加密失败: %v", err)
+	//	return
+	//}
+	//logx.Infof("传输解密结果: %v", msgResult.Data)
+	//
+	////note: 数据加密
+	//encryptResult, err := s.KmsService.Skc.KmsSkcEncrypt(context.Background(), &qxTypesKms.KmsSkcEncryptReq{
+	//	Name:     "id-qx-cas-key-001",
+	//	BaseData: base64.StdEncoding.EncodeToString([]byte("华仔最帅，帅到爆炸")),
+	//})
+	//if err != nil {
+	//	logx.Errorf("测试数据加密失败: %v", err)
+	//	return
+	//}
+	//logx.Infof("测试数据加密结果: %v", encryptResult.Data)
+	//
+	//// note: 数据解密
+	//decryptResult, err := s.KmsService.Skc.KmsSkcDecrypt(context.Background(), &qxTypesKms.KmsSkcDecryptReq{
+	//	Name:     "id-qx-cas-key-001",
+	//	BaseData: encryptResult.Data.BaseData,
+	//})
+	//if err != nil {
+	//	logx.Errorf("测试数据解密失败: %v", err)
+	//	return
+	//}
+	//realData, _ := base64.StdEncoding.DecodeString(decryptResult.Data.BaseData)
+	//logx.Infof("测试数据解密结果: %v", string(realData))
 
 	//
 	//for true {

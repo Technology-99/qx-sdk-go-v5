@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxBase"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCcs"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxCli"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxConfig"
@@ -46,6 +47,9 @@ type QxSdk struct {
 	// note: 锁
 	mu sync.Mutex
 
+	// note: 琼霄自身的服务
+	qxBase.QxBaseService
+
 	// note: 云端配置存储服务
 	CcsService qxCcs.CcsService
 	// note: 消息服务
@@ -71,17 +75,18 @@ func NewQxSdk(c *qxConfig.Config) *QxSdk {
 	qxC := qxCtx.NewQxCtx(qxClient)
 
 	sdk := &QxSdk{
-		Version:     string(versionFile),
-		QxCtx:       qxC,
-		Status:      SdkStatusNotReady,
-		ctx:         ctx,
-		cancel:      cancel,
-		CcsService:  qxCcs.NewCcsService(qxC),
-		KmsService:  qxKms.NewKmsService(qxC),
-		MasService:  qxMas.NewMasService(qxC),
-		SasService:  qxSas.NewSasService(qxC),
-		CtasService: qxCtas.NewCtasService(qxC),
-		TpasService: qxTpas.NewTpasService(qxC),
+		Version:       string(versionFile),
+		QxCtx:         qxC,
+		Status:        SdkStatusNotReady,
+		ctx:           ctx,
+		cancel:        cancel,
+		QxBaseService: qxBase.NewQxBaseService(qxC),
+		CcsService:    qxCcs.NewCcsService(qxC),
+		KmsService:    qxKms.NewKmsService(qxC),
+		MasService:    qxMas.NewMasService(qxC),
+		SasService:    qxSas.NewSasService(qxC),
+		CtasService:   qxCtas.NewCtasService(qxC),
+		TpasService:   qxTpas.NewTpasService(qxC),
 	}
 	sdk.Init()
 	return sdk

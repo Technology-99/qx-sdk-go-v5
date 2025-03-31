@@ -9,6 +9,7 @@ require (
 
 require (
 	github.com/fatih/color v1.18.0 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/lionsoul2014/ip2region v2.11.2+incompatible // indirect
