@@ -30,13 +30,13 @@ func (m *defaultCtasBaseService) TestMsg(ctx context.Context, params *qxTypesCta
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/captcha/generate", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("healthz request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		logx.Errorf("qx sdk:captchaGenerate fail: %v", result)
 		return result, nil
 	}
 	return result, nil

@@ -51,12 +51,12 @@ func (m *defaultCommonService) Create(ctx context.Context, params *qxTypes.Allow
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/create", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("healthz request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		logx.Errorf("qx sdk:captchaGenerate fail: %v", result)
 		return result, nil
 	}
 	return result, nil
@@ -67,12 +67,12 @@ func (m *defaultCommonService) CreateWithOssFrontUpload(ctx context.Context, par
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/createWithOssFrontedUpload", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("healthz request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		logx.Errorf("qx sdk:captchaGenerate fail: %v", result)
 		return result, nil
 	}
 	return result, nil
@@ -83,12 +83,12 @@ func (m *defaultCommonService) CreateWithOssV4FrontUpload(ctx context.Context, p
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/createWithOssV4FrontedUpload", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("healthz request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		logx.Errorf("qx sdk:captchaGenerate fail: %v", result)
 		return result, nil
 	}
 	return result, nil
@@ -99,12 +99,12 @@ func (m *defaultCommonService) Delete(ctx context.Context, params *qxTypes.SasFi
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/delete", http.MethodDelete, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("healthz request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		logx.Errorf("qx sdk:captchaGenerate fail: %v", result)
 		return result, nil
 	}
 	return result, nil
@@ -115,12 +115,12 @@ func (m *defaultCommonService) DeleteMany(ctx context.Context, params *qxTypes.S
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/deleteMany", http.MethodDelete, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("healthz request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		logx.Errorf("qx sdk:captchaGenerate fail: %v", result)
 		return result, nil
 	}
 	return result, nil
@@ -131,12 +131,12 @@ func (m *defaultCommonService) Update(ctx context.Context, params *qxTypes.Allow
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/update", http.MethodPut, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("healthz request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		logx.Errorf("qx sdk:captchaGenerate fail: %v", result)
 		return result, nil
 	}
 	return result, nil
@@ -147,12 +147,12 @@ func (m *defaultCommonService) UpdateStatus(ctx context.Context, params *qxTypes
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/updateStatus", http.MethodPatch, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("healthz request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		logx.Errorf("qx sdk:captchaGenerate fail: %v", result)
 		return result, nil
 	}
 	return result, nil
@@ -163,12 +163,12 @@ func (m *defaultCommonService) Query(ctx context.Context, params *qxTypes.SasFil
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/query", http.MethodGet, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("healthz request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		logx.Errorf("qx sdk:captchaGenerate fail: %v", result)
 		return result, nil
 	}
 	return result, nil
@@ -179,12 +179,12 @@ func (m *defaultCommonService) QueryListWhereIds(ctx context.Context, params *qx
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/queryListWhereIds", http.MethodGet, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("healthz request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		logx.Errorf("qx sdk:captchaGenerate fail: %v", result)
 		return result, nil
 	}
 	return result, nil
@@ -195,12 +195,12 @@ func (m *defaultCommonService) QueryList(ctx context.Context, params *qxTypes.Sa
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/queryList", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("healthz request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		logx.Errorf("qx sdk:captchaGenerate fail: %v", result)
 		return result, nil
 	}
 	return result, nil

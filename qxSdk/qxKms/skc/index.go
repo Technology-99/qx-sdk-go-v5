@@ -38,12 +38,12 @@ func (m *defaultKmsSkcService) KmsSkcCreateKeychain(ctx context.Context, params 
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/kms/skc/createKeychain", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("qx sdk KmsSkcCreateKeychain error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qx sdk KmsSkcCreateKeychain fail: %v", result)
+		logx.Errorf("qx sdk: KmsSkcCreateKeychain fail: %v", result)
 		return result, nil
 	}
 	return result, nil
@@ -54,12 +54,12 @@ func (m *defaultKmsSkcService) KmsSkcEncrypt(ctx context.Context, params *qxType
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/kms/skc/encrypt", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("qx sdk KmsSkcCreateKeychain error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qx sdk KmsSkcCreateKeychain fail: %v", result)
+		logx.Errorf("qx sdk: KmsSkcCreateKeychain fail: %v", result)
 		return result, nil
 	}
 	return result, nil
@@ -70,18 +70,18 @@ func (m *defaultKmsSkcService) KmsSkcDecrypt(ctx context.Context, params *qxType
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/kms/skc/decrypt", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("qx sdk KmsSkcDecrypt error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qx sdk KmsSkcDecrypt fail: %v", result)
+		logx.Errorf("qx sdk: KmsSkcDecrypt fail: %v", result)
 		return result, nil
 	}
 	// note: 解密的数据需要额外解密
 	decryptMsg, err := m.qxCtx.Parser.Decrypt(result.Data.BaseData)
 	if err != nil {
-		logx.Errorf("qx sdk KmsSkcDecrypt parser error: %v", err)
+		logx.Errorf("qx sdk: KmsSkcDecrypt parser error: %v", err)
 		return nil, nil
 	}
 	result.Data.BaseData = base64.StdEncoding.EncodeToString(decryptMsg)
@@ -93,12 +93,12 @@ func (m *defaultKmsSkcService) KmsSkcBatchEncrypt(ctx context.Context, params *q
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/kms/skc/batchEncrypt", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("qx sdk KmsSkcCreateKeychain error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qx sdk KmsSkcCreateKeychain fail: %v", result)
+		logx.Errorf("qx sdk: KmsSkcCreateKeychain fail: %v", result)
 		return result, nil
 	}
 	return result, nil
@@ -109,19 +109,19 @@ func (m *defaultKmsSkcService) KmsSkcBatchDecrypt(ctx context.Context, params *q
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/kms/skc/batchDecrypt", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("qx sdk KmsSkcCreateKeychain error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qx sdk KmsSkcCreateKeychain fail: %v", result)
+		logx.Errorf("qx sdk: KmsSkcCreateKeychain fail: %v", result)
 		return result, nil
 	}
 	for k, v := range result.Data {
 		// note: 解密的数据需要额外解密
 		decryptMsg, err := m.qxCtx.Parser.Decrypt(v.BaseData)
 		if err != nil {
-			logx.Errorf("qx sdk KmsSkcDecrypt parser error: %v", err)
+			logx.Errorf("qx sdk: KmsSkcDecrypt parser error: %v", err)
 			return nil, nil
 		}
 		result.Data[k] = qxTypesKms.KmsSkcBatchDecryptRespItem{
@@ -138,19 +138,19 @@ func (m *defaultKmsSkcService) KmsSkcCompare(ctx context.Context, params *qxType
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/kms/skc/compare", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("qx sdk KmsSkcCreateKeychain error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qx sdk KmsSkcCreateKeychain fail: %v", result)
+		logx.Errorf("qx sdk: KmsSkcCreateKeychain fail: %v", result)
 		return result, nil
 	}
 	for i, v := range result.Data.List {
 		// note: 解密的数据需要额外解密
 		decryptMsg, err := m.qxCtx.Parser.Decrypt(v.BaseData)
 		if err != nil {
-			logx.Errorf("qx sdk KmsSkcDecrypt parser error: %v", err)
+			logx.Errorf("qx sdk: KmsSkcDecrypt parser error: %v", err)
 			return nil, nil
 		}
 		result.Data.List[i] = qxTypesKms.KmsSkcCompareRespDataItem{

@@ -29,13 +29,13 @@ func NewCcsBaseService(qxCtx *qxCtx.QxCtx) CcsBaseService {
 func (m *defaultCcsBaseService) TestMsg(ctx context.Context, params *qxTypesCcs.CcsTestMsgReq) (result *qxTypesCcs.CcsTestMsgResp, err error) {
 	result = &qxTypesCcs.CcsTestMsgResp{}
 	if m.qxCtx.Parser.Status() != qxParser.QxParserStatusReady {
-		logx.Errorf("ccs-TestMsg parser status not ready")
+		logx.Errorf("qx sdk: parser status not ready")
 		return nil, nil
 	}
 	sendMsg, err := m.qxCtx.Parser.Encrypt(params.Msg)
 	logx.Infof("打印加密后的消息: %s", sendMsg)
 	if err != nil {
-		logx.Errorf("ccs-TestMsg aes encrypt error: %v", err)
+		logx.Errorf("qx sdk: aes encrypt error: %v", err)
 		return
 	}
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/ccs/testMsg", http.MethodPost, &qxTypesCcs.CcsTestMsgReq{
@@ -44,23 +44,23 @@ func (m *defaultCcsBaseService) TestMsg(ctx context.Context, params *qxTypesCcs.
 	})
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("ccs-TestMsg request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: ccs-TestMsg fail: %v", result)
+		logx.Errorf("qx sdk: ccs-TestMsg fail: %v", result)
 		return result, nil
 	}
 	// note: 使用aes解密数据
 	aesResultData := qxTypesCcs.CcsTestMsgRespData{}
 	decryptMsg, err := m.qxCtx.Parser.Decrypt(result.Msg)
 	if err != nil {
-		logx.Errorf("ccs-TestMsg aes decrypt error: %v", err)
+		logx.Errorf("qx sdk: decrypt error: %v", err)
 		return
 	}
 	if err = json.Unmarshal(decryptMsg, &aesResultData); err != nil {
-		logx.Errorf("ccs-TestMsg Data Unmarshal error: %v", err)
+		logx.Errorf("qx sdk: Unmarshal error: %v", err)
 		return
 	}
 	result.Data = aesResultData

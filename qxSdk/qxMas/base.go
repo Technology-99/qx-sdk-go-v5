@@ -39,12 +39,12 @@ func (m *defaultMasBaseService) CaptchaGenerate(ctx context.Context, params *qxT
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/captcha/generate", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("healthz request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		logx.Errorf("qx sdk: captcha generate fail: %v", result)
 		return result, nil
 	}
 	return result, nil
@@ -55,12 +55,12 @@ func (m *defaultMasBaseService) SmsSend(ctx context.Context, params *qxTypes.Api
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/sms/send", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("healthz request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		logx.Errorf("qx sdk: sms send fail: %v", result)
 		return result, nil
 	}
 	return result, nil
@@ -71,12 +71,12 @@ func (m *defaultMasBaseService) BehavioralVerificationInit(ctx context.Context, 
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/bv/init", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("healthz request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		logx.Errorf("qx sdk:Behavioral Verification Init fail: %v", result)
 		return result, nil
 	}
 	return result, nil
@@ -87,12 +87,12 @@ func (m *defaultMasBaseService) BehavioralVerificationVerify(ctx context.Context
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/bv/verify", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("healthz request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		logx.Errorf("qx sdk: Behavioral Verification Verify fail: %v", result)
 		return result, nil
 	}
 	return result, nil
@@ -103,12 +103,12 @@ func (m *defaultMasBaseService) SmsVerificationInit(ctx context.Context, params 
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/sms/init", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("healthz request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		logx.Errorf("qx sdk: sms init fail: %v", result)
 		return result, nil
 	}
 	return result, nil
@@ -119,12 +119,12 @@ func (m *defaultMasBaseService) SmsVerificationVerify(ctx context.Context, param
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/sms/verify", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("healthz request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		logx.Errorf("qx sdk: sms verify fail: %v", result)
 		return result, nil
 	}
 	return result, nil

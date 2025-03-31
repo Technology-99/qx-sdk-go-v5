@@ -34,19 +34,17 @@ func NewKmsBaseService(qxCtx *qxCtx.QxCtx) KmsBaseService {
 func (m *defaultKmsBaseService) TestMsg(ctx context.Context, params *qxTypesKms.KmsTestMsgReq) (result *qxTypesKms.KmsTestMsgResp, err error) {
 	result = &qxTypesKms.KmsTestMsgResp{}
 	if m.qxCtx.Parser.Status() != qxParser.QxParserStatusReady {
-		logx.Errorf("kms-TestMsg parser status not ready")
+		logx.Errorf("qx sdk: parser status not ready")
 		return nil, nil
 	}
 	msg := fmt.Sprintf("test msg: %s", time.Now().Format(time.DateTime))
 	encryptMsg, err := m.qxCtx.Parser.Encrypt(msg)
 	if err != nil {
-		logx.Errorf("qx sdk encrypt error: %v", err)
-		logx.Errorf("kms-TestMsg aes encrypt error: %v", err)
+		logx.Errorf("qx sdk: aes encrypt error: %v", err)
 		return
 	}
-	logx.Infof("打印加密后的消息: %s", encryptMsg)
 	if err != nil {
-		logx.Errorf("kms-TestMsg aes encrypt error: %v", err)
+		logx.Errorf("qx sdk: aes encrypt error: %v", err)
 		return
 	}
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/kms/testMsg", http.MethodPost, &qxTypesCcs.CcsTestMsgReq{
@@ -54,31 +52,30 @@ func (m *defaultKmsBaseService) TestMsg(ctx context.Context, params *qxTypesKms.
 	})
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("kms-TestMsg request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	tmpResultData := qxTypesKms.KmsEncryptResp{}
 	_ = json.Unmarshal(res, &tmpResultData)
 	if tmpResultData.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: kms-TestMsg fail: %v", tmpResultData)
+		logx.Errorf("qx sdk: kms-TestMsg fail: %v", tmpResultData)
 		result.Code = tmpResultData.Code
 		result.Msg = qxCodes.StatusText(tmpResultData.Code)
 		result.Path = tmpResultData.Path
 		result.RequestID = tmpResultData.RequestID
 		return result, nil
 	}
-	logx.Infof("kms-TestMsg data: %v", tmpResultData.Data)
 	logx.Infof("打印解析器的状态 %s", m.qxCtx.Parser.FormatStatus())
 	// note: 使用aes解密数据
 	decryptMsg, err := m.qxCtx.Parser.Decrypt(tmpResultData.Data)
 	if err != nil {
-		logx.Errorf("kms-TestMsg aes decrypt error: %v", err)
+		logx.Errorf("qx sdk: aes decrypt error: %v", err)
 		return
 	}
-	logx.Infof("kms-TestMsg decryptMsg: %v", string(decryptMsg))
+	logx.Infof("qx sdk: decryptMsg: %v", string(decryptMsg))
 	aesResultData := qxTypesKms.KmsTestMsgRespData{}
 	if err = json.Unmarshal(decryptMsg, &aesResultData); err != nil {
-		logx.Errorf("kms-TestMsg Data Unmarshal error: %v", err)
+		logx.Errorf("qx sdk: Data Unmarshal error: %v", err)
 		return
 	}
 	result.Data = aesResultData

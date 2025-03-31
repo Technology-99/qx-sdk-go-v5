@@ -34,12 +34,12 @@ func (m *defaultKmsAkcService) KmsAkcCreateKeychain(ctx context.Context, params 
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/kms/akc/createKeychain", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("qx sdk KmsAkcCreateKeychain error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qx sdk KmsAkcCreateKeychain fail: %v", result)
+		logx.Errorf("qx sdk: KmsAkcCreateKeychain fail: %v", result)
 		return result, nil
 	}
 	return result, nil
@@ -50,12 +50,12 @@ func (m *defaultKmsAkcService) KmsAkcSign(ctx context.Context, params *qxTypesKm
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/kms/akc/sign", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("qx sdk KmsAkcSign error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qx sdk KmsAkcSign fail: %v", result)
+		logx.Errorf("qx sdk: KmsAkcSign fail: %v", result)
 		return result, nil
 	}
 	return result, nil
@@ -66,12 +66,12 @@ func (m *defaultKmsAkcService) KmsAkcVerify(ctx context.Context, params *qxTypes
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/kms/akc/verify", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("qx sdk KmsAkcVerify error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qx sdk KmsAkcVerify fail: %v", result)
+		logx.Errorf("qx sdk: KmsAkcVerify fail: %v", result)
 		return result, nil
 	}
 	return result, nil

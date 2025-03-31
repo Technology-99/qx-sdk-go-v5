@@ -31,12 +31,12 @@ func (m *defaultOffiaccountService) Create(ctx context.Context, params *qxTypes.
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/create", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
-		logx.Errorf("healthz request error: %v", err)
+		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qiongxiao sdk errlog: captchaGenerate fail: %v", result)
+		logx.Errorf("qx sdk: Create fail: %v", result)
 		return result, nil
 	}
 	return result, nil
