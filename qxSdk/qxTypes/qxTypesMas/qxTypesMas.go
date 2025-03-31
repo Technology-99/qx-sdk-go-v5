@@ -5,7 +5,7 @@ type SmsInitReq struct {
 	Service string `json:"service"`
 	Type    string `json:"type,optional"`
 	Zone    string `json:"zone,optional"`
-	Mobile  string `json:"mobile,optional"`
+	Phone   string `json:"phone,optional"`
 }
 
 type SmsInitResp struct {
@@ -22,9 +22,9 @@ type SmsInitRespData struct {
 
 type SmsVerifyReq struct {
 	Service    string `json:"service"`
-	Type       string `json:"type,optional"`
-	Zone       string `json:"zone,optional"`
-	Mobile     string `json:"mobile,optional"`
+	Type       string `json:"type"`
+	Zone       string `json:"zone"`
+	Phone      string `json:"phone"`
 	VerifyCode string `json:"verifyCode"`
 }
 
