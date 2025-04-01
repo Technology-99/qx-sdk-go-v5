@@ -6,7 +6,6 @@ package qxTypes
 type AllowCreateModelSasFile struct {
 	UploadType   int32  `json:"uploadType,optional"`
 	Key          string `json:"key"`
-	Bucket       string `json:"bucket"`
 	CollectionId uint32 `json:"collectionId,optional"`
 	FileName     string `json:"fileName"`
 	FileSize     int64  `json:"fileSize"`
@@ -17,7 +16,6 @@ type AllowCreateModelSasFile struct {
 
 type AllowCreateModelSasFileWithFrontedUpload struct {
 	Key              string `json:"key"`
-	Bucket           string `json:"bucket"`
 	FileName         string `json:"fileName"`
 	FileSize         int64  `json:"fileSize"`
 	MimeType         string `json:"mimeType"`
@@ -651,9 +649,9 @@ type SignResultModel struct {
 type SmsInitReq struct {
 	Key     string `json:"key"`
 	Service string `json:"service"`
-	Type    string `json:"type,optional"`
-	Zone    string `json:"zone,optional"`
-	Mobile  string `json:"mobile,optional"`
+	Type    string `json:"type"`
+	Zone    string `json:"zone"`
+	Phone   string `json:"phone"`
 }
 
 type SmsInitResp struct {
@@ -670,9 +668,9 @@ type SmsInitRespData struct {
 
 type SmsVerifyReq struct {
 	Service    string `json:"service"`
-	Type       string `json:"type,optional"`
-	Zone       string `json:"zone,optional"`
-	Mobile     string `json:"mobile,optional"`
+	Type       string `json:"type"`
+	Zone       string `json:"zone"`
+	Phone      string `json:"phone"`
 	VerifyCode string `json:"verifyCode"`
 }
 
