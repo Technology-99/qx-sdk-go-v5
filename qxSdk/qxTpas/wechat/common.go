@@ -15,10 +15,6 @@ type (
 		// note: 文件管理部分
 		// Create note: 创建一个文件
 		Create(ctx context.Context, params *qxTypes.AllowCreateModelSasFile) (result *qxTypes.SasFileApiCreateResp, err error)
-		// CreateWithOssFrontUpload note: 添加一个文件并通过OSS前端直传
-		CreateWithOssFrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelSasFileWithFrontedUpload) (result *qxTypes.SasFileCommonCreateWithOssFrontUploadResp, err error)
-		// CreateWithOssV4FrontUpload note: 添加一个文件并通过OSSV4前端直传
-		CreateWithOssV4FrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelSasFileWithFrontedUpload) (result *qxTypes.SasFileApiCreateWithOssV4FrontUploadResp, err error)
 		// Delete note: 删除一个
 		Delete(ctx context.Context, params *qxTypes.SasFileApiFormIdReq) (result *qxTypes.SasFileApiOKResp, err error)
 		// DeleteMany note: 批量删除
@@ -49,38 +45,6 @@ func NewCommonService(qxCtx *qxCtx.QxCtx) CommonService {
 func (m *defaultCommonService) Create(ctx context.Context, params *qxTypes.AllowCreateModelSasFile) (result *qxTypes.SasFileApiCreateResp, err error) {
 	result = &qxTypes.SasFileApiCreateResp{}
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/create", http.MethodPost, &params)
-	res, err := reqFn()
-	if err != nil {
-		logx.Errorf("qx sdk: request error: %v", err)
-		return nil, nil
-	}
-	_ = json.Unmarshal(res, &result)
-	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qx sdk:captchaGenerate fail: %v", result)
-		return result, nil
-	}
-	return result, nil
-}
-
-func (m *defaultCommonService) CreateWithOssFrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelSasFileWithFrontedUpload) (result *qxTypes.SasFileCommonCreateWithOssFrontUploadResp, err error) {
-	result = &qxTypes.SasFileCommonCreateWithOssFrontUploadResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/createWithOssFrontedUpload", http.MethodPost, &params)
-	res, err := reqFn()
-	if err != nil {
-		logx.Errorf("qx sdk: request error: %v", err)
-		return nil, nil
-	}
-	_ = json.Unmarshal(res, &result)
-	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qx sdk:captchaGenerate fail: %v", result)
-		return result, nil
-	}
-	return result, nil
-}
-
-func (m *defaultCommonService) CreateWithOssV4FrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelSasFileWithFrontedUpload) (result *qxTypes.SasFileApiCreateWithOssV4FrontUploadResp, err error) {
-	result = &qxTypes.SasFileApiCreateWithOssV4FrontUploadResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/createWithOssV4FrontedUpload", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
