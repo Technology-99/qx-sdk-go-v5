@@ -64,7 +64,7 @@ func (m *defaultFileService) Create(ctx context.Context, params *qxTypes.AllowCr
 
 func (m *defaultFileService) CreateAndDirectUpload(ctx context.Context, params *qxTypes.AllowCreateAndDirectUpload) (result *qxTypes.SasFileCreateAndDirectUploadResp, err error) {
 	result = &qxTypes.SasFileCreateAndDirectUploadResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/createWithOssFrontedUpload", http.MethodPost, &params)
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/createAndDirectUpload", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
@@ -80,7 +80,7 @@ func (m *defaultFileService) CreateAndDirectUpload(ctx context.Context, params *
 
 func (m *defaultFileService) CheckoutResult(ctx context.Context, params *qxTypes.SasFileApiCheckoutResultReq) (result *qxTypes.SasFileApiCheckoutResultResp, err error) {
 	result = &qxTypes.SasFileApiCheckoutResultResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/createWithOssFrontedUpload", http.MethodPost, &params)
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/checkoutResult", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
