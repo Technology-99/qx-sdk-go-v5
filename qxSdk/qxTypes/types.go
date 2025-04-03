@@ -4,47 +4,61 @@
 package qxTypes
 
 type AllowCreateAndDirectUpload struct {
-	Key              string   `json:"key"`
 	FileName         string   `json:"fileName"`
-	CollectionId     uint32   `json:"collectionId,optional"`
+	BucketKey        string   `json:"bucketKey"`
+	FolderId         uint32   `json:"folderId,optional"`
 	Remark           string   `json:"remark,optional"`
 	Cover            string   `json:"cover,optional"`
 	AlternativeCover []string `json:"alternativeCover,optional"`
-	UploadDir        string   `json:"uploadDir,optional"`
 }
 
 type AllowCreateModelSasFile struct {
 	UploadType       int32    `json:"uploadType"`
 	FileName         string   `json:"fileName"`
-	CollectionId     uint32   `json:"collectionId,optional"`
+	FolderId         uint32   `json:"folderId,optional"`
 	Remark           string   `json:"remark,optional"`
-	UploadDir        string   `json:"uploadDir,optional"`
+	Cover            string   `json:"cover"`
 	AlternativeCover []string `json:"alternativeCover,optional"`
-	Key              string   `json:"key,optional"`
 	FileSize         int64    `json:"fileSize,optional"`
 	MimeType         string   `json:"mimeType,optional"`
 	ExternalUrl      string   `json:"externalUrl,optional"`
-	ExternalPwd      string   `json:"externalPwd,optional"`
+	BucketKey        string   `json:"bucketKey,optional"`
+}
+
+type AllowCreateModelSasFolder struct {
+	Name        string `json:"name"`
+	Alias       string `json:"alias"`
+	Cover       string `json:"cover,optional"`
+	ArchiveType int32  `json:"archiveType,optional"`
+	ParentId    uint32 `json:"parentId,optional"`
 }
 
 type AllowUpdateModelSasFile struct {
 	Id               uint32   `json:"id"`
-	CollectionId     uint32   `json:"collectionId,optional"`
-	FileName         string   `json:"fileName,optional"`
-	Cover            string   `json:"cover,optional"`
-	AlternativeCover []string `json:"alternativeCover,optional"`
-	Width            int32    `json:"width,optional"`
-	Height           int32    `json:"height,optional"`
-	UploadSignBody   string   `json:"uploadSignBody,optional"`
+	FolderId         uint32   `json:"folderId,optional"`
+	Name             string   `json:"name,optional"`
+	Remark           string   `json:"remark,optional"`
+	Cover            string   `json:"cover"`
+	AlternativeCover []string `json:"alternativeCover"`
+}
+
+type AllowUpdateModelSasFolder struct {
+	Id          uint32 `json:"id"`
+	Name        string `json:"name,optional"`
+	Alias       string `json:"alias,optional"`
+	Cover       string `json:"cover,optional"`
+	ArchiveType int32  `json:"archiveType,optional"`
+	ParentId    uint32 `json:"parentId"`
 }
 
 type AllowUpdateStatusModelSasFile struct {
-	Id               uint32   `json:"id"`
-	Status           int32    `json:"status"`
-	AlternativeCover []string `json:"alternativeCover,optional"`
-	Width            int32    `json:"width,optional"`
-	Height           int32    `json:"height,optional"`
-	UploadSignBody   string   `json:"uploadSignBody,optional"`
+	Id     uint32 `json:"id"`
+	Status int32  `json:"status"`
+}
+
+type AllowUpdateStatusModelSasFolder struct {
+	Id     uint32 `json:"id"`
+	Status int32  `json:"status"`
 }
 
 type ApiCaptchaGenerateReq struct {
@@ -530,6 +544,19 @@ type ModelSasFile struct {
 	UploadSignBody  string   `json:"uploadSignBody"`
 }
 
+type ModelSasFolder struct {
+	Id            uint32 `json:"id"`
+	CreatedAtUnix int64  `json:"createdAtUnix"`
+	UpdatedAtUnix int64  `json:"updatedAtUnix"`
+	Name          string `json:"name"`
+	Alias         string `json:"alias"`
+	Cover         string `json:"cover"`
+	ArchiveType   int32  `json:"archiveType"`
+	Owner         string `json:"owner"`
+	Status        int32  `json:"status"`
+	ParentId      uint32 `json:"parentId"`
+}
+
 type ModelZone struct {
 	Label string `json:"label"`
 	Code  string `json:"code"`
@@ -563,9 +590,11 @@ type SasFileApiCheckoutResultResp struct {
 
 type SasFileApiCheckoutResultRespData struct {
 	Status      string `json:"status"`
+	Name        string `json:"name"`
+	FolderId    uint32 `json:"folderId"`
 	ExternalUrl string `json:"externalUrl"`
 	Cover       string `json:"cover"`
-	FormatName  string `json:"formatName"`
+	Remark      string `json:"remark"`
 }
 
 type SasFileApiCreateResp struct {
@@ -580,12 +609,12 @@ type SasFileApiFormIdReq struct {
 	Id uint32 `form:"id"`
 }
 
-type SasFileApiFormIdsReq struct {
-	Ids []uint32 `form:"id"`
-}
-
 type SasFileApiJsonIdReq struct {
 	Id uint32 `json:"id"`
+}
+
+type SasFileApiJsonIdsReq struct {
+	Ids []uint32 `json:"id"`
 }
 
 type SasFileApiOKResp struct {
@@ -640,6 +669,66 @@ type SasFileCreateAndDirectUploadRespData struct {
 	Id     uint32            `json:"id"`
 	Url    string            `json:"url"`
 	Fields map[string]string `json:"fields"`
+}
+
+type SasFolderApiCreateResp struct {
+	Code      int32                 `json:"code"`
+	Msg       string                `json:"msg"`
+	RequestID string                `json:"requestId"`
+	Path      string                `json:"path"`
+	Data      SasFolderApiJsonIdReq `json:"data"`
+}
+
+type SasFolderApiFormIdReq struct {
+	Id uint32 `form:"id"`
+}
+
+type SasFolderApiJsonIdReq struct {
+	Id uint32 `json:"id"`
+}
+
+type SasFolderApiJsonIdsReq struct {
+	Ids []uint32 `json:"id"`
+}
+
+type SasFolderApiOKResp struct {
+	Code      int32  `json:"code"`
+	Msg       string `json:"msg"`
+	RequestID string `json:"requestId"`
+	Path      string `json:"path"`
+	Data      string `json:"data"`
+}
+
+type SasFolderCommonQueryListResp struct {
+	Code      int32                            `json:"code"`
+	Msg       string                           `json:"msg"`
+	Path      string                           `json:"path"`
+	RequestID string                           `json:"requestId"`
+	Data      SasFolderCommonQueryListRespData `json:"data"`
+}
+
+type SasFolderCommonQueryListRespData struct {
+	List     []ModelSasFolder `json:"list"`
+	Total    int64            `json:"total"`
+	Page     int32            `json:"page"`
+	PageSize int32            `json:"pageSize"`
+}
+
+type SasFolderCommonQueryResp struct {
+	Code      int32          `json:"code"`
+	Msg       string         `json:"msg"`
+	Path      string         `json:"path"`
+	RequestID string         `json:"requestId"`
+	Data      ModelSasFolder `json:"data"`
+}
+
+type SasFolderCommonSearchParams struct {
+	Page           int32  `json:"page,optional"`
+	PageSize       int32  `json:"pageSize,optional"`
+	StartCreatedAt int64  `json:"startCreatedAt,optional"`
+	EndCreatedAt   int64  `json:"endCreatedAt,optional"`
+	Keyword        string `json:"keyword,optional"`
+	Status         int32  `json:"status,optional"`
 }
 
 type SignResultModel struct {

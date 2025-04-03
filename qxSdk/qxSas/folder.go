@@ -11,24 +11,24 @@ import (
 )
 
 type (
-	FileCollService interface {
+	FolderService interface {
 		// note: 文件管理部分
 		// Create note: 创建一个文件
 		Create(ctx context.Context, params *qxTypes.AllowCreateModelSasFile) (result *qxTypes.SasFileApiCreateResp, err error)
 	}
 
-	defaultFileCollService struct {
+	defaultFolderService struct {
 		cli *qxCli.QxClient
 	}
 )
 
-func NewFileCollService(cli *qxCli.QxClient) FileCollService {
-	return &defaultFileCollService{
+func NewFolderService(cli *qxCli.QxClient) FolderService {
+	return &defaultFolderService{
 		cli: cli,
 	}
 }
 
-func (m *defaultFileCollService) Create(ctx context.Context, params *qxTypes.AllowCreateModelSasFile) (result *qxTypes.SasFileApiCreateResp, err error) {
+func (m *defaultFolderService) Create(ctx context.Context, params *qxTypes.AllowCreateModelSasFile) (result *qxTypes.SasFileApiCreateResp, err error) {
 	result = &qxTypes.SasFileApiCreateResp{}
 	reqFn := m.cli.EasyNewRequest(ctx, "/sas/fileColl/create", http.MethodPost, &params)
 	res, err := reqFn()

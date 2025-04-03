@@ -18,7 +18,7 @@ type (
 		// Delete note: 删除一个
 		Delete(ctx context.Context, params *qxTypes.SasFileApiFormIdReq) (result *qxTypes.SasFileApiOKResp, err error)
 		// DeleteMany note: 批量删除
-		DeleteMany(ctx context.Context, params *qxTypes.SasFileApiFormIdsReq) (result *qxTypes.SasFileApiOKResp, err error)
+		DeleteMany(ctx context.Context, params *qxTypes.SasFileApiJsonIdsReq) (result *qxTypes.SasFileApiOKResp, err error)
 		// Update note: 修改基础数据
 		Update(ctx context.Context, params *qxTypes.AllowUpdateModelSasFile) (result *qxTypes.SasFileApiOKResp, err error)
 		// UpdateStatus note: 修改启用状态
@@ -26,7 +26,7 @@ type (
 		// Query note: 查询一个
 		Query(ctx context.Context, params *qxTypes.SasFileApiFormIdReq) (result *qxTypes.SasFileCommonQueryResp, err error)
 		// QueryListWhereIds note: 查询列表根据ids
-		QueryListWhereIds(ctx context.Context, params *qxTypes.SasFileApiFormIdsReq) (result *qxTypes.SasFileCommonQueryListResp, err error)
+		QueryListWhereIds(ctx context.Context, params *qxTypes.SasFileApiJsonIdsReq) (result *qxTypes.SasFileCommonQueryListResp, err error)
 		// QueryList note: 查询列表
 		QueryList(ctx context.Context, params *qxTypes.SasFileCommonSearchParams) (result *qxTypes.SasFileCommonQueryListResp, err error)
 	}
@@ -74,9 +74,9 @@ func (m *defaultCommonService) Delete(ctx context.Context, params *qxTypes.SasFi
 	return result, nil
 }
 
-func (m *defaultCommonService) DeleteMany(ctx context.Context, params *qxTypes.SasFileApiFormIdsReq) (result *qxTypes.SasFileApiOKResp, err error) {
+func (m *defaultCommonService) DeleteMany(ctx context.Context, params *qxTypes.SasFileApiJsonIdsReq) (result *qxTypes.SasFileApiOKResp, err error) {
 	result = &qxTypes.SasFileApiOKResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/deleteMany", http.MethodDelete, &params)
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/deleteMany", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
@@ -138,9 +138,9 @@ func (m *defaultCommonService) Query(ctx context.Context, params *qxTypes.SasFil
 	return result, nil
 }
 
-func (m *defaultCommonService) QueryListWhereIds(ctx context.Context, params *qxTypes.SasFileApiFormIdsReq) (result *qxTypes.SasFileCommonQueryListResp, err error) {
+func (m *defaultCommonService) QueryListWhereIds(ctx context.Context, params *qxTypes.SasFileApiJsonIdsReq) (result *qxTypes.SasFileCommonQueryListResp, err error) {
 	result = &qxTypes.SasFileCommonQueryListResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/queryListWhereIds", http.MethodGet, &params)
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/queryListWhereIds", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
