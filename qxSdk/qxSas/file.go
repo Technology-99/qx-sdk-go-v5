@@ -15,10 +15,10 @@ type (
 		// note: 文件管理部分
 		// Create note: 创建一个文件
 		Create(ctx context.Context, params *qxTypes.AllowCreateModelSasFile) (result *qxTypes.SasFileApiCreateResp, err error)
-		// CreateWithOssFrontUpload note: 添加一个文件并通过OSS前端直传
-		CreateWithOssFrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelSasFileWithFrontedUpload) (result *qxTypes.SasFileCommonCreateWithOssFrontUploadResp, err error)
-		// CreateWithOssV4FrontUpload note: 添加一个文件并通过OSSV4前端直传
-		CreateWithOssV4FrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelSasFileWithFrontedUpload) (result *qxTypes.SasFileApiCreateWithOssV4FrontUploadResp, err error)
+		// note: 添加一个文件并通过前端直传
+		CreateAndDirectUpload(ctx context.Context, params *qxTypes.AllowCreateAndDirectUpload) (result *qxTypes.SasFileCreateAndDirectUploadResp, err error)
+		// note: 上传完之后调用检查此接口完成上传
+		CheckoutResult(ctx context.Context, params *qxTypes.SasFileApiCheckoutResultReq) (result *qxTypes.SasFileApiCheckoutResultResp, err error)
 		// Delete note: 删除一个
 		Delete(ctx context.Context, params *qxTypes.SasFileApiFormIdReq) (result *qxTypes.SasFileApiOKResp, err error)
 		// DeleteMany note: 批量删除
@@ -62,8 +62,8 @@ func (m *defaultFileService) Create(ctx context.Context, params *qxTypes.AllowCr
 	return result, nil
 }
 
-func (m *defaultFileService) CreateWithOssFrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelSasFileWithFrontedUpload) (result *qxTypes.SasFileCommonCreateWithOssFrontUploadResp, err error) {
-	result = &qxTypes.SasFileCommonCreateWithOssFrontUploadResp{}
+func (m *defaultFileService) CreateAndDirectUpload(ctx context.Context, params *qxTypes.AllowCreateAndDirectUpload) (result *qxTypes.SasFileCreateAndDirectUploadResp, err error) {
+	result = &qxTypes.SasFileCreateAndDirectUploadResp{}
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/createWithOssFrontedUpload", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
@@ -78,9 +78,9 @@ func (m *defaultFileService) CreateWithOssFrontUpload(ctx context.Context, param
 	return result, nil
 }
 
-func (m *defaultFileService) CreateWithOssV4FrontUpload(ctx context.Context, params *qxTypes.AllowCreateModelSasFileWithFrontedUpload) (result *qxTypes.SasFileApiCreateWithOssV4FrontUploadResp, err error) {
-	result = &qxTypes.SasFileApiCreateWithOssV4FrontUploadResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/createWithOssV4FrontedUpload", http.MethodPost, &params)
+func (m *defaultFileService) CheckoutResult(ctx context.Context, params *qxTypes.SasFileApiCheckoutResultReq) (result *qxTypes.SasFileApiCheckoutResultResp, err error) {
+	result = &qxTypes.SasFileApiCheckoutResultResp{}
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/createWithOssFrontedUpload", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
@@ -88,7 +88,7 @@ func (m *defaultFileService) CreateWithOssV4FrontUpload(ctx context.Context, par
 	}
 	_ = json.Unmarshal(res, &result)
 	if result.Code != qxCodes.QxEngineStatusOK {
-		logx.Errorf("qx sdk: CreateWithOssV4FrontUpload fail: %v", result)
+		logx.Errorf("qx sdk: CreateWithOssFrontUpload fail: %v", result)
 		return result, nil
 	}
 	return result, nil

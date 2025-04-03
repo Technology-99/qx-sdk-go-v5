@@ -3,26 +3,28 @@
 
 package qxTypes
 
-type AllowCreateModelSasFile struct {
-	UploadType   int32  `json:"uploadType,optional"`
-	Key          string `json:"key"`
-	CollectionId uint32 `json:"collectionId,optional"`
-	FileName     string `json:"fileName"`
-	FileSize     int64  `json:"fileSize"`
-	MimeType     string `json:"mimeType"`
-	Remark       string `json:"remark,optional"`
-	UploadDir    string `json:"uploadDir,optional"`
+type AllowCreateAndDirectUpload struct {
+	Key              string   `json:"key"`
+	FileName         string   `json:"fileName"`
+	CollectionId     uint32   `json:"collectionId,optional"`
+	Remark           string   `json:"remark,optional"`
+	Cover            string   `json:"cover,optional"`
+	AlternativeCover []string `json:"alternativeCover,optional"`
+	UploadDir        string   `json:"uploadDir,optional"`
 }
 
-type AllowCreateModelSasFileWithFrontedUpload struct {
-	Key              string `json:"key"`
-	FileName         string `json:"fileName"`
-	FileSize         int64  `json:"fileSize"`
-	MimeType         string `json:"mimeType"`
-	CollectionId     uint32 `json:"collectionId,optional"`
-	Remark           string `json:"remark,optional"`
-	UploadDir        string `json:"uploadDir,optional"`
-	IsMultipleTenant bool   `json:"isMultipleTenant,optional"`
+type AllowCreateModelSasFile struct {
+	UploadType       int32    `json:"uploadType"`
+	FileName         string   `json:"fileName"`
+	CollectionId     uint32   `json:"collectionId,optional"`
+	Remark           string   `json:"remark,optional"`
+	UploadDir        string   `json:"uploadDir,optional"`
+	AlternativeCover []string `json:"alternativeCover,optional"`
+	Key              string   `json:"key,optional"`
+	FileSize         int64    `json:"fileSize,optional"`
+	MimeType         string   `json:"mimeType,optional"`
+	ExternalUrl      string   `json:"externalUrl,optional"`
+	ExternalPwd      string   `json:"externalPwd,optional"`
 }
 
 type AllowUpdateModelSasFile struct {
@@ -546,25 +548,32 @@ type PingResp struct {
 	Data      string `json:"data"`
 }
 
+type SasFileApiCheckoutResultReq struct {
+	FileId   uint32 `json:"fileId,optional"`
+	FileUuid string `json:"fileUuid,optional"`
+}
+
+type SasFileApiCheckoutResultResp struct {
+	Code      int32                            `json:"code"`
+	Msg       string                           `json:"msg"`
+	Path      string                           `json:"path"`
+	RequestID string                           `json:"requestId"`
+	Data      SasFileApiCheckoutResultRespData `json:"data"`
+}
+
+type SasFileApiCheckoutResultRespData struct {
+	Status      string `json:"status"`
+	ExternalUrl string `json:"externalUrl"`
+	Cover       string `json:"cover"`
+	FormatName  string `json:"formatName"`
+}
+
 type SasFileApiCreateResp struct {
 	Code      int32               `json:"code"`
 	Msg       string              `json:"msg"`
 	RequestID string              `json:"requestId"`
 	Path      string              `json:"path"`
 	Data      SasFileApiJsonIdReq `json:"data"`
-}
-
-type SasFileApiCreateWithOssV4FrontUploadResp struct {
-	Code      int32                                        `json:"code"`
-	Msg       string                                       `json:"msg"`
-	Path      string                                       `json:"path"`
-	RequestID string                                       `json:"requestId"`
-	Data      SasFileApiCreateWithOssV4FrontUploadRespData `json:"data"`
-}
-
-type SasFileApiCreateWithOssV4FrontUploadRespData struct {
-	Id      uint32 `json:"id"`
-	SignUrl string `json:"signUrl"`
 }
 
 type SasFileApiFormIdReq struct {
@@ -585,26 +594,6 @@ type SasFileApiOKResp struct {
 	RequestID string `json:"requestId"`
 	Path      string `json:"path"`
 	Data      string `json:"data"`
-}
-
-type SasFileCommonCreateWithOssFrontUploadResp struct {
-	Code      int32                                         `json:"code"`
-	Msg       string                                        `json:"msg"`
-	Path      string                                        `json:"path"`
-	RequestID string                                        `json:"requestId"`
-	Data      SasFileCommonCreateWithOssFrontUploadRespData `json:"data"`
-}
-
-type SasFileCommonCreateWithOssFrontUploadRespData struct {
-	Id             uint32 `json:"id"`
-	Key            string `json:"key"`
-	OSSAccessKeyId string `json:"ossAccessKeyId"`
-	Policy         string `json:"policy"`
-	Signature      string `json:"signature"`
-	Callback       string `json:"callback"`
-	IsCallback     bool   `json:"isCallback"`
-	Host           string `json:"host"`
-	Domain         string `json:"domain"`
 }
 
 type SasFileCommonQueryListResp struct {
@@ -637,6 +626,20 @@ type SasFileCommonSearchParams struct {
 	EndCreatedAt   int64  `json:"endCreatedAt,optional"`
 	Keyword        string `json:"keyword,optional"`
 	Status         int32  `json:"status,optional"`
+}
+
+type SasFileCreateAndDirectUploadResp struct {
+	Code      int32                                `json:"code"`
+	Msg       string                               `json:"msg"`
+	Path      string                               `json:"path"`
+	RequestID string                               `json:"requestId"`
+	Data      SasFileCreateAndDirectUploadRespData `json:"data"`
+}
+
+type SasFileCreateAndDirectUploadRespData struct {
+	Id     uint32            `json:"id"`
+	Url    string            `json:"url"`
+	Fields map[string]string `json:"fields"`
 }
 
 type SignResultModel struct {
