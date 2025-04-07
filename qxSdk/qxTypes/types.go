@@ -511,6 +511,21 @@ type KmsTestMsgReq struct {
 	Msg string `json:"msg"`
 }
 
+type ModelBucket struct {
+	Id                     uint32 `json:"id"`
+	CreatedAtUnix          int64  `json:"createdAtUnix"`
+	UpdatedAtUnix          int64  `json:"updatedAtUnix"`
+	Name                   string `json:"name"`
+	Prefix                 string `json:"prefix"`
+	Region                 string `json:"region"`
+	BucketInternetDomain   string `json:"bucketInternetDomain"`
+	BucketInternalDomain   string `json:"bucketInternalDomain"`
+	IsAccelerate           int32  `json:"isAccelerate"`
+	BucketAccelerateDomain string `json:"bucketAccelerateDomain"`
+	StaticDomain           string `json:"staticDomain"`
+	CdnDomain              string `json:"cdnDomain"`
+}
+
 type ModelCode struct {
 	Code string `json:"code"`
 	Num  int32  `json:"num"`
@@ -521,7 +536,6 @@ type ModelSasFile struct {
 	Id              uint32   `json:"id"`
 	CreatedAtUnix   int64    `json:"createdAtUnix"`
 	UpdatedAtUnix   int64    `json:"updatedAtUnix"`
-	TenantId        uint32   `json:"tenantId"`     // 租户ID
 	CollectionId    uint32   `json:"collectionId"` // 文件集合ID
 	Key             string   `json:"key"`          // 配置的key
 	UploadType      int32    `json:"uploadType"`
@@ -572,6 +586,17 @@ type PingResp struct {
 	Msg       string `json:"msg"`
 	Path      string `json:"path"`
 	RequestID string `json:"requestId"`
+	Data      string `json:"data"`
+}
+
+type SasBootstrapReq struct {
+}
+
+type SasBootstrapResp struct {
+	Code      int32  `json:"code"`
+	Msg       string `json:"msg"`
+	RequestID string `json:"requestId"`
+	Path      string `json:"path"`
 	Data      string `json:"data"`
 }
 
@@ -729,6 +754,18 @@ type SasFolderCommonSearchParams struct {
 	EndCreatedAt   int64  `json:"endCreatedAt,optional"`
 	Keyword        string `json:"keyword,optional"`
 	Status         int32  `json:"status,optional"`
+}
+
+type SasQueryBucketReq struct {
+	BucketKey string `json:"bucketKey"`
+}
+
+type SasQueryBucketResp struct {
+	Code      int32       `json:"code"`
+	Msg       string      `json:"msg"`
+	RequestID string      `json:"requestId"`
+	Path      string      `json:"path"`
+	Data      ModelBucket `json:"data"`
 }
 
 type SignResultModel struct {
