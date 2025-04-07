@@ -6,7 +6,8 @@ import (
 
 type (
 	SasService struct {
-		FileService FileService
+		FileService   FileService
+		FolderService FolderService
 		SasBaseService
 	}
 )
@@ -14,6 +15,7 @@ type (
 func NewSasService(qxCtx *qxCtx.QxCtx) SasService {
 	return SasService{
 		FileService:    NewFileService(qxCtx),
+		FolderService:  NewFolderService(qxCtx),
 		SasBaseService: NewSasBaseService(qxCtx),
 	}
 }
