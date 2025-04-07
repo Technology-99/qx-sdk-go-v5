@@ -756,6 +756,42 @@ type SasFolderCommonSearchParams struct {
 	Status         int32  `json:"status,optional"`
 }
 
+type SasPresignerHeadObjectReq struct {
+	BucketKey string `json:"bucketKey"`
+	Path      string `json:"path"`
+}
+
+type SasPresignerHeadObjectResp struct {
+	Code      int32                          `json:"code"`
+	Msg       string                         `json:"msg"`
+	RequestID string                         `json:"requestId"`
+	Path      string                         `json:"path"`
+	Data      SasPresignerHeadObjectRespData `json:"data"`
+}
+
+type SasPresignerHeadObjectRespData struct {
+	Url    string `json:"url"`
+	Method string `json:"method"`
+}
+
+type SasPresignerUploadReq struct {
+	BucketKey string `json:"bucketKey"`
+	Path      string `json:"path"`
+}
+
+type SasPresignerUploadResp struct {
+	Code      int32                      `json:"code"`
+	Msg       string                     `json:"msg"`
+	RequestID string                     `json:"requestId"`
+	Path      string                     `json:"path"`
+	Data      SasPresignerUploadRespData `json:"data"`
+}
+
+type SasPresignerUploadRespData struct {
+	Url    string            `json:"url"`
+	Fields map[string]string `json:"fields"`
+}
+
 type SasQueryBucketReq struct {
 	BucketKey string `json:"bucketKey"`
 }

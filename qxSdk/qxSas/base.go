@@ -13,6 +13,8 @@ import (
 type (
 	SasBaseService interface {
 		QueryBucket(ctx context.Context, params *qxTypes.SasQueryBucketReq) (result *qxTypes.SasQueryBucketResp, err error)
+		PresignerUpload(ctx context.Context, params *qxTypes.SasPresignerUploadReq) (result *qxTypes.SasPresignerUploadResp, err error)
+		PresignerHeadObject(ctx context.Context, params *qxTypes.SasPresignerHeadObjectReq) (result *qxTypes.SasPresignerHeadObjectResp, err error)
 	}
 	defaultSasBaseService struct {
 		qxCtx *qxCtx.QxCtx
@@ -28,6 +30,38 @@ func NewSasBaseService(qxCtx *qxCtx.QxCtx) SasBaseService {
 func (m *defaultSasBaseService) QueryBucket(ctx context.Context, params *qxTypes.SasQueryBucketReq) (result *qxTypes.SasQueryBucketResp, err error) {
 	result = &qxTypes.SasQueryBucketResp{}
 	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/queryBucket", http.MethodPost, &params)
+	res, err := reqFn()
+	if err != nil {
+		logx.Errorf("qx sdk: request error: %v", err)
+		return nil, nil
+	}
+	_ = json.Unmarshal(res, &result)
+	if result.Code != qxCodes.QxEngineStatusOK {
+		logx.Errorf("qx sdk: Create fail: %v", result)
+		return result, nil
+	}
+	return result, nil
+}
+
+func (m *defaultSasBaseService) PresignerUpload(ctx context.Context, params *qxTypes.SasPresignerUploadReq) (result *qxTypes.SasPresignerUploadResp, err error) {
+	result = &qxTypes.SasPresignerUploadResp{}
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/presignerUpload", http.MethodPost, &params)
+	res, err := reqFn()
+	if err != nil {
+		logx.Errorf("qx sdk: request error: %v", err)
+		return nil, nil
+	}
+	_ = json.Unmarshal(res, &result)
+	if result.Code != qxCodes.QxEngineStatusOK {
+		logx.Errorf("qx sdk: Create fail: %v", result)
+		return result, nil
+	}
+	return result, nil
+}
+
+func (m *defaultSasBaseService) PresignerHeadObject(ctx context.Context, params *qxTypes.SasPresignerHeadObjectReq) (result *qxTypes.SasPresignerHeadObjectResp, err error) {
+	result = &qxTypes.SasPresignerHeadObjectResp{}
+	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/presignerHeadObject", http.MethodPost, &params)
 	res, err := reqFn()
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
