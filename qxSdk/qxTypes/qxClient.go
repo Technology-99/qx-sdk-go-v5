@@ -26,6 +26,7 @@ type QxClientKeyExChangeResp struct {
 }
 
 type QxClientKeyExChangeRespData struct {
+	SessionId string `json:"sessionId"`
 	PublicKey string `json:"publicKey"`
 	ExpireAt  int64  `json:"expireAt"`
 }

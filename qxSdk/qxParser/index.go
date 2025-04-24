@@ -25,6 +25,7 @@ type (
 		Encrypt(data string) (string, error)
 	}
 	defaultQxParser struct {
+		sessionId        string
 		localPrivateKey  *ecdh.PrivateKey
 		remotePublicKey  *ecdh.PublicKey
 		sharedSecretBase string

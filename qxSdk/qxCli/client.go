@@ -20,6 +20,7 @@ type QxClient struct {
 	*http.Client
 	Config              *qxConfig.Config
 	Context             context.Context
+	SessionId           string
 	AccessKeyId         string
 	AccessToken         string
 	AccessTokenExpires  int64
@@ -58,6 +59,11 @@ func (cli *QxClient) WithRequestId(requestId string) *QxClient {
 
 func (cli *QxClient) WithTimeout(timeout time.Duration) *QxClient {
 	cli.Client.Timeout = timeout
+	return cli
+}
+
+func (cli *QxClient) SetSessionId(sessionId string) *QxClient {
+	cli.SessionId = sessionId
 	return cli
 }
 
@@ -150,5 +156,6 @@ func (cli *QxClient) GenHeaders() *map[string]string {
 
 	headers[qxCommonHeader.HeaderAuthorization] = "Bearer " + cli.AccessToken
 	headers[qxCommonHeader.HeaderXAccessKeyFor] = cli.AccessKeyId
+	headers[qxCommonHeader.HeaderXSessionIdFor] = cli.SessionId
 	return &headers
 }

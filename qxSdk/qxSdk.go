@@ -381,6 +381,7 @@ func (s *QxSdk) KeyExChange() (*QxSdk, error) {
 		logx.Errorf("qx sdk: qx sdk parser init err: %v", err)
 		return nil, err
 	}
+	s.QxCtx.Cli.SetSessionId(result.Data.SessionId)
 	if s.Status <= SdkStatusReady {
 		s.Status = SdkStatusReady
 	}
