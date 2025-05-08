@@ -36,8 +36,8 @@ func NewMsgBaseService(qxCtx *qxCtx.QxCtx) MasBaseService {
 
 func (m *defaultMasBaseService) CaptchaGenerate(ctx context.Context, params *qxTypes.ApiCaptchaGenerateReq) (result *qxTypes.ApiCaptchaGenerateResp, err error) {
 	result = &qxTypes.ApiCaptchaGenerateResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/captcha/generate", http.MethodPost, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/captcha/generate", http.MethodPost, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -52,8 +52,8 @@ func (m *defaultMasBaseService) CaptchaGenerate(ctx context.Context, params *qxT
 
 func (m *defaultMasBaseService) SmsSend(ctx context.Context, params *qxTypes.ApiSmsSendReq) (result *qxTypes.ApiSmsSendResp, err error) {
 	result = &qxTypes.ApiSmsSendResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/sms/send", http.MethodPost, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/sms/send", http.MethodPost, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -68,8 +68,8 @@ func (m *defaultMasBaseService) SmsSend(ctx context.Context, params *qxTypes.Api
 
 func (m *defaultMasBaseService) BehavioralVerificationInit(ctx context.Context, params *qxTypesMas.BehavioralVerificationInitReq) (result *qxTypesMas.BehavioralVerificationInitResp, err error) {
 	result = &qxTypesMas.BehavioralVerificationInitResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/bv/init", http.MethodPost, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/bv/init", http.MethodPost, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -84,8 +84,8 @@ func (m *defaultMasBaseService) BehavioralVerificationInit(ctx context.Context, 
 
 func (m *defaultMasBaseService) BehavioralVerificationVerify(ctx context.Context, params *qxTypesMas.BehavioralVerificationVerifyReq) (result *qxTypesMas.BehavioralVerificationVerifyResp, err error) {
 	result = &qxTypesMas.BehavioralVerificationVerifyResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/bv/verify", http.MethodPost, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/bv/verify", http.MethodPost, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -100,8 +100,8 @@ func (m *defaultMasBaseService) BehavioralVerificationVerify(ctx context.Context
 
 func (m *defaultMasBaseService) SmsVerificationInit(ctx context.Context, params *qxTypesMas.SmsInitReq) (result *qxTypesMas.SmsInitResp, err error) {
 	result = &qxTypesMas.SmsInitResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/sms/init", http.MethodPost, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/sms/init", http.MethodPost, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -116,8 +116,8 @@ func (m *defaultMasBaseService) SmsVerificationInit(ctx context.Context, params 
 
 func (m *defaultMasBaseService) SmsVerificationVerify(ctx context.Context, params *qxTypesMas.SmsVerifyReq) (result *qxTypesMas.SmsVerifyResp, err error) {
 	result = &qxTypesMas.SmsVerifyResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/sms/verify", http.MethodPost, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/mas/sms/verify", http.MethodPost, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil

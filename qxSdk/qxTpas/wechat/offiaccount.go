@@ -28,8 +28,8 @@ func NewOffiaccountService(qxCtx *qxCtx.QxCtx) OffiaccountService {
 
 func (m *defaultOffiaccountService) Create(ctx context.Context, params *qxTypes.AllowCreateModelSasFile) (result *qxTypes.SasFileApiCreateResp, err error) {
 	result = &qxTypes.SasFileApiCreateResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/create", http.MethodPost, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/create", http.MethodPost, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil

@@ -31,8 +31,8 @@ func NewKmsAkcService(qxCtx *qxCtx.QxCtx) KmsAkcService {
 
 func (m *defaultKmsAkcService) KmsAkcCreateKeychain(ctx context.Context, params *qxTypesKms.KmsAkcCreateKeychainReq) (result *qxTypesKms.KmsAkcCreateKeychainResp, err error) {
 	result = &qxTypesKms.KmsAkcCreateKeychainResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/kms/akc/createKeychain", http.MethodPost, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/kms/akc/createKeychain", http.MethodPost, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -47,8 +47,8 @@ func (m *defaultKmsAkcService) KmsAkcCreateKeychain(ctx context.Context, params 
 
 func (m *defaultKmsAkcService) KmsAkcSign(ctx context.Context, params *qxTypesKms.KmsAkcSignReq) (result *qxTypesKms.KmsAkcSignResp, err error) {
 	result = &qxTypesKms.KmsAkcSignResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/kms/akc/sign", http.MethodPost, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/kms/akc/sign", http.MethodPost, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -63,8 +63,8 @@ func (m *defaultKmsAkcService) KmsAkcSign(ctx context.Context, params *qxTypesKm
 
 func (m *defaultKmsAkcService) KmsAkcVerify(ctx context.Context, params *qxTypesKms.KmsAkcVerifyReq) (result *qxTypesKms.KmsAkcVerifyResp, err error) {
 	result = &qxTypesKms.KmsAkcVerifyResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/kms/akc/verify", http.MethodPost, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/kms/akc/verify", http.MethodPost, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil

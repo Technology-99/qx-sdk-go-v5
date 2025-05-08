@@ -7,7 +7,6 @@ import (
 	"github.com/Technology-99/qxLib/qxCrypto"
 	"github.com/zeromicro/go-zero/core/logx"
 	"golang.org/x/crypto/hkdf"
-	"time"
 )
 
 const (
@@ -17,10 +16,9 @@ const (
 
 type (
 	QxParser interface {
-		Init(localPrivateKey *ecdh.PrivateKey, remotePublicKey *ecdh.PublicKey, expireAt time.Time) error
+		Init(localPrivateKey *ecdh.PrivateKey, remotePublicKey *ecdh.PublicKey) error
 		Status() int
 		FormatStatus() string
-		ExpireAt() time.Time
 		Decrypt(data string) ([]byte, error)
 		Encrypt(data string) (string, error)
 	}
@@ -32,7 +30,6 @@ type (
 		deriveAESKeyBase string
 		deriveAESIvBase  string
 		status           int
-		expireAt         time.Time
 	}
 )
 
@@ -42,14 +39,7 @@ func NewQxParser() QxParser {
 	}
 }
 
-func (m *defaultQxParser) ExpireAt() time.Time {
-	return m.expireAt
-}
-
 func (m *defaultQxParser) FormatStatus() string {
-	if time.Now().Unix() > m.expireAt.Unix() {
-		m.status = QxParserStatusNotReady
-	}
 	switch m.status {
 	case QxParserStatusNotReady:
 		return "解析器未就绪"
@@ -61,13 +51,10 @@ func (m *defaultQxParser) FormatStatus() string {
 }
 
 func (m *defaultQxParser) Status() int {
-	if time.Now().Unix() > m.expireAt.Unix() {
-		m.status = QxParserStatusNotReady
-	}
 	return m.status
 }
 
-func (m *defaultQxParser) Init(localPrivateKey *ecdh.PrivateKey, remotePublicKey *ecdh.PublicKey, expireAt time.Time) error {
+func (m *defaultQxParser) Init(localPrivateKey *ecdh.PrivateKey, remotePublicKey *ecdh.PublicKey) error {
 	// 计算共享密钥
 	sharedSecret, err := localPrivateKey.ECDH(remotePublicKey)
 	if err != nil {
@@ -84,7 +71,6 @@ func (m *defaultQxParser) Init(localPrivateKey *ecdh.PrivateKey, remotePublicKey
 	m.deriveAESKeyBase = base64.StdEncoding.EncodeToString(derivedKey)
 	m.deriveAESIvBase = base64.StdEncoding.EncodeToString(sharedSecret[0:qxCrypto.AESGCMIvLen])
 	m.status = QxParserStatusReady
-	m.expireAt = expireAt
 	return nil
 }
 

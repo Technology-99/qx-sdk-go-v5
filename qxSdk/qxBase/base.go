@@ -37,8 +37,7 @@ func (m *defaultQxBaseService) Codes(ctx context.Context, params *qxTypes.CodesR
 	} else {
 		relativePath = "/codes"
 	}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, relativePath, http.MethodGet, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, relativePath, http.MethodGet, &params)
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -60,8 +59,7 @@ func (m *defaultQxBaseService) Zones(ctx context.Context, params *qxTypes.ZonesR
 	} else {
 		relativePath = "/zones"
 	}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, relativePath, http.MethodGet, nil)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, relativePath, http.MethodGet, nil)
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil

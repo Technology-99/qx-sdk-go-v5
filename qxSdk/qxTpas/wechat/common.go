@@ -44,8 +44,8 @@ func NewCommonService(qxCtx *qxCtx.QxCtx) CommonService {
 
 func (m *defaultCommonService) Create(ctx context.Context, params *qxTypes.AllowCreateModelSasFile) (result *qxTypes.SasFileApiCreateResp, err error) {
 	result = &qxTypes.SasFileApiCreateResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/create", http.MethodPost, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/create", http.MethodPost, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -60,8 +60,8 @@ func (m *defaultCommonService) Create(ctx context.Context, params *qxTypes.Allow
 
 func (m *defaultCommonService) Delete(ctx context.Context, params *qxTypes.SasFileApiFormIdReq) (result *qxTypes.SasFileApiOKResp, err error) {
 	result = &qxTypes.SasFileApiOKResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/delete", http.MethodDelete, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/delete", http.MethodDelete, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -76,8 +76,8 @@ func (m *defaultCommonService) Delete(ctx context.Context, params *qxTypes.SasFi
 
 func (m *defaultCommonService) DeleteMany(ctx context.Context, params *qxTypes.SasFileApiJsonIdsReq) (result *qxTypes.SasFileApiOKResp, err error) {
 	result = &qxTypes.SasFileApiOKResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/deleteMany", http.MethodPost, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/deleteMany", http.MethodPost, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -92,8 +92,8 @@ func (m *defaultCommonService) DeleteMany(ctx context.Context, params *qxTypes.S
 
 func (m *defaultCommonService) Update(ctx context.Context, params *qxTypes.AllowUpdateModelSasFile) (result *qxTypes.SasFileApiOKResp, err error) {
 	result = &qxTypes.SasFileApiOKResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/update", http.MethodPut, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/update", http.MethodPut, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -108,8 +108,8 @@ func (m *defaultCommonService) Update(ctx context.Context, params *qxTypes.Allow
 
 func (m *defaultCommonService) UpdateStatus(ctx context.Context, params *qxTypes.AllowUpdateStatusModelSasFile) (result *qxTypes.SasFileApiOKResp, err error) {
 	result = &qxTypes.SasFileApiOKResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/updateStatus", http.MethodPatch, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/updateStatus", http.MethodPatch, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -124,8 +124,8 @@ func (m *defaultCommonService) UpdateStatus(ctx context.Context, params *qxTypes
 
 func (m *defaultCommonService) Query(ctx context.Context, params *qxTypes.SasFileApiFormIdReq) (result *qxTypes.SasFileCommonQueryResp, err error) {
 	result = &qxTypes.SasFileCommonQueryResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/query", http.MethodGet, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/query", http.MethodGet, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -140,8 +140,8 @@ func (m *defaultCommonService) Query(ctx context.Context, params *qxTypes.SasFil
 
 func (m *defaultCommonService) QueryListWhereIds(ctx context.Context, params *qxTypes.SasFileApiJsonIdsReq) (result *qxTypes.SasFileCommonQueryListResp, err error) {
 	result = &qxTypes.SasFileCommonQueryListResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/queryListWhereIds", http.MethodPost, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/queryListWhereIds", http.MethodPost, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -156,8 +156,8 @@ func (m *defaultCommonService) QueryListWhereIds(ctx context.Context, params *qx
 
 func (m *defaultCommonService) QueryList(ctx context.Context, params *qxTypes.SasFileCommonSearchParams) (result *qxTypes.SasFileCommonQueryListResp, err error) {
 	result = &qxTypes.SasFileCommonQueryListResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/queryList", http.MethodPost, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/file/queryList", http.MethodPost, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil

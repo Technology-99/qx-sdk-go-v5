@@ -28,21 +28,21 @@ func NewCcsBaseService(qxCtx *qxCtx.QxCtx) CcsBaseService {
 
 func (m *defaultCcsBaseService) TestMsg(ctx context.Context, params *qxTypesCcs.CcsTestMsgReq) (result *qxTypesCcs.CcsTestMsgResp, err error) {
 	result = &qxTypesCcs.CcsTestMsgResp{}
-	if m.qxCtx.Parser.Status() != qxParser.QxParserStatusReady {
+	if m.qxCtx.Cli.Parser.Status() != qxParser.QxParserStatusReady {
 		logx.Errorf("qx sdk: parser status not ready")
 		return nil, nil
 	}
-	sendMsg, err := m.qxCtx.Parser.Encrypt(params.Msg)
+	sendMsg, err := m.qxCtx.Cli.Parser.Encrypt(params.Msg)
 	logx.Infof("打印加密后的消息: %s", sendMsg)
 	if err != nil {
 		logx.Errorf("qx sdk: aes encrypt error: %v", err)
 		return
 	}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/ccs/testMsg", http.MethodPost, &qxTypesCcs.CcsTestMsgReq{
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/ccs/testMsg", http.MethodPost, &qxTypesCcs.CcsTestMsgReq{
 		Msg: sendMsg,
 		Key: params.Key,
 	})
-	res, err := reqFn()
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -54,7 +54,7 @@ func (m *defaultCcsBaseService) TestMsg(ctx context.Context, params *qxTypesCcs.
 	}
 	// note: 使用aes解密数据
 	aesResultData := qxTypesCcs.CcsTestMsgRespData{}
-	decryptMsg, err := m.qxCtx.Parser.Decrypt(result.Msg)
+	decryptMsg, err := m.qxCtx.Cli.Parser.Decrypt(result.Msg)
 	if err != nil {
 		logx.Errorf("qx sdk: decrypt error: %v", err)
 		return

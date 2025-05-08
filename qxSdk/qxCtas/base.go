@@ -27,8 +27,8 @@ func NewCtasBaseService(qxCtx *qxCtx.QxCtx) CtasBaseService {
 
 func (m *defaultCtasBaseService) TestMsg(ctx context.Context, params *qxTypesCtas.CtasTestMsgReq) (result *qxTypesCtas.CtasTestMsgResp, err error) {
 	result = &qxTypesCtas.CtasTestMsgResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/captcha/generate", http.MethodPost, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/captcha/generate", http.MethodPost, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil

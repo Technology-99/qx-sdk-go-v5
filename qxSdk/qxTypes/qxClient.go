@@ -64,6 +64,26 @@ type QxClientApiSignReq struct {
 	AccessSecret string `json:"accessSecret"`
 }
 
+type QxClientApiTokenReq struct {
+	AccessKey    string `json:"accessKey"`
+	AccessSecret string `json:"accessSecret"`
+	PublicKey    string `json:"publicKey"`
+}
+
+type QxClientApiTokenResp struct {
+	Code      int32                     `json:"code"`
+	Msg       string                    `json:"msg"`
+	Path      string                    `json:"path"`
+	RequestID string                    `json:"requestId"`
+	Data      QxClientApiTokenRespModel `json:"data"`
+}
+
+type QxClientApiTokenRespModel struct {
+	AccessToken string `json:"accessToken"`
+	ExpiresIn   int64  `json:"expiresIn"`
+	TokenType   string `json:"tokenType"`
+}
+
 type QxClientApiSignResp struct {
 	Code      int32                   `json:"code"`
 	Msg       string                  `json:"msg"`

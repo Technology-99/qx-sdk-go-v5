@@ -2,6 +2,8 @@ package qxConfig
 
 import (
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
+	"github.com/zeromicro/go-zero/core/logx"
+	"os"
 	"time"
 )
 
@@ -23,9 +25,15 @@ type Config struct {
 	Timeout          time.Duration `default:"5000"`
 	AutoRefreshToken bool          `default:"true"`
 	Deadline         int64
+	HomeDir          string
 }
 
 func DefaultConfig(AccessKeyId, AccessKeySecret string, Endpoint string) (config *Config) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		panic(err)
+	}
+	logx.Infof("获取到用户根目录, 读取相关文件: %s", homeDir)
 
 	config = &Config{
 		AutoRetry:        true,
@@ -36,8 +44,9 @@ func DefaultConfig(AccessKeyId, AccessKeySecret string, Endpoint string) (config
 		AccessKeyId:      AccessKeyId,
 		AccessKeySecret:  AccessKeySecret,
 		Endpoint:         Endpoint,
-		Deadline:         5,
+		Deadline:         2,
 		Protocol:         qxTypes.ProtocolHttps,
+		HomeDir:          homeDir,
 	}
 	return config
 }

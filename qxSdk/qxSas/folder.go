@@ -44,8 +44,8 @@ func NewFolderService(qxCtx *qxCtx.QxCtx) FolderService {
 
 func (m *defaultFolderService) Create(ctx context.Context, params *qxTypes.AllowCreateModelSasFolder) (result *qxTypes.SasFolderApiCreateResp, err error) {
 	result = &qxTypes.SasFolderApiCreateResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/folder/create", http.MethodPost, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/folder/create", http.MethodPost, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -60,8 +60,8 @@ func (m *defaultFolderService) Create(ctx context.Context, params *qxTypes.Allow
 
 func (m *defaultFolderService) Delete(ctx context.Context, params *qxTypes.SasFolderApiFormIdReq) (result *qxTypes.SasFolderApiOKResp, err error) {
 	result = &qxTypes.SasFolderApiOKResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/folder/delete", http.MethodDelete, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/folder/delete", http.MethodDelete, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -76,8 +76,8 @@ func (m *defaultFolderService) Delete(ctx context.Context, params *qxTypes.SasFo
 
 func (m *defaultFolderService) DeleteMany(ctx context.Context, params *qxTypes.SasFolderApiJsonIdsReq) (result *qxTypes.SasFolderApiOKResp, err error) {
 	result = &qxTypes.SasFolderApiOKResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/folder/deleteMany", http.MethodPost, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/folder/deleteMany", http.MethodPost, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -92,8 +92,8 @@ func (m *defaultFolderService) DeleteMany(ctx context.Context, params *qxTypes.S
 
 func (m *defaultFolderService) Update(ctx context.Context, params *qxTypes.AllowUpdateModelSasFolder) (result *qxTypes.SasFolderApiOKResp, err error) {
 	result = &qxTypes.SasFolderApiOKResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/folder/update", http.MethodPut, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/folder/update", http.MethodPut, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -108,8 +108,8 @@ func (m *defaultFolderService) Update(ctx context.Context, params *qxTypes.Allow
 
 func (m *defaultFolderService) UpdateStatus(ctx context.Context, params *qxTypes.AllowUpdateStatusModelSasFolder) (result *qxTypes.SasFolderApiOKResp, err error) {
 	result = &qxTypes.SasFolderApiOKResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/folder/updateStatus", http.MethodPatch, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/folder/updateStatus", http.MethodPatch, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -124,8 +124,8 @@ func (m *defaultFolderService) UpdateStatus(ctx context.Context, params *qxTypes
 
 func (m *defaultFolderService) Query(ctx context.Context, params *qxTypes.SasFolderApiFormIdReq) (result *qxTypes.SasFolderCommonQueryResp, err error) {
 	result = &qxTypes.SasFolderCommonQueryResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/folder/query", http.MethodGet, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/folder/query", http.MethodGet, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -140,8 +140,8 @@ func (m *defaultFolderService) Query(ctx context.Context, params *qxTypes.SasFol
 
 func (m *defaultFolderService) QueryListWhereIds(ctx context.Context, params *qxTypes.SasFolderApiJsonIdsReq) (result *qxTypes.SasFolderCommonQueryListResp, err error) {
 	result = &qxTypes.SasFolderCommonQueryListResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/folder/queryListWhereIds", http.MethodPost, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/folder/queryListWhereIds", http.MethodPost, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
@@ -156,8 +156,8 @@ func (m *defaultFolderService) QueryListWhereIds(ctx context.Context, params *qx
 
 func (m *defaultFolderService) QueryList(ctx context.Context, params *qxTypes.SasFolderCommonSearchParams) (result *qxTypes.SasFolderCommonQueryListResp, err error) {
 	result = &qxTypes.SasFolderCommonQueryListResp{}
-	reqFn := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/folder/queryList", http.MethodPost, &params)
-	res, err := reqFn()
+	res, err := m.qxCtx.Cli.EasyNewRequest(ctx, "/sas/folder/queryList", http.MethodPost, &params)
+
 	if err != nil {
 		logx.Errorf("qx sdk: request error: %v", err)
 		return nil, nil
