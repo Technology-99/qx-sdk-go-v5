@@ -82,6 +82,7 @@ func (cli *QxClient) Init() error {
 			}
 		}
 	}
+	logx.Infof("qx sdk: read config file success")
 
 	// 监听文件变化
 	cli.viper.WatchConfig()
