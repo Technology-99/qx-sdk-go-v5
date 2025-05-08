@@ -21,6 +21,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"path"
 	"sync"
 	"time"
@@ -67,14 +68,15 @@ func (cli *QxClient) Init() error {
 	cli.viper.SetConfigType("json")
 	if err := cli.viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			// Config file not found; ignore error if desired
 			logx.Errorf("文件不存在")
+			// Config file not found; ignore error if desired
 			if err = cli.Login(); err != nil {
 				log.Fatalf("qx sdk: login err: %v", err)
 			}
 		} else {
 			// Config file was found but another error was produced
 			logx.Errorf("qx sdk: read config err: %v", err)
+			os.MkdirAll(path.Dir(cli.authConfigFile), os.ModePerm)
 			if err = cli.Login(); err != nil {
 				log.Fatalf("qx sdk: login err: %v", err)
 			}
