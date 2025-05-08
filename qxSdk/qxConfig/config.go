@@ -44,7 +44,7 @@ func DefaultConfig(AccessKeyId, AccessKeySecret string, Endpoint string) (config
 		AccessKeyId:      AccessKeyId,
 		AccessKeySecret:  AccessKeySecret,
 		Endpoint:         Endpoint,
-		Deadline:         2,
+		Deadline:         5,
 		Protocol:         qxTypes.ProtocolHttps,
 		HomeDir:          homeDir,
 	}

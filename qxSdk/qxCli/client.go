@@ -12,6 +12,7 @@ import (
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTypes"
 	"github.com/Technology-99/qxLib/qxCodes"
 	"github.com/Technology-99/qxLib/qxCommonHeader"
+	"github.com/Technology-99/qxLib/qxJwts"
 	"github.com/Technology-99/qxLib/qxMiddleware"
 	"github.com/Technology-99/qxLib/qxRes"
 	"github.com/Technology-99/qxLib/qxSony"
@@ -32,7 +33,10 @@ type QxClient struct {
 
 	Config *qxConfig.Config
 	// note: 锁
-	mu             sync.Mutex
+	Mu         sync.Mutex
+	Wg         sync.WaitGroup // 等待后台任务退出
+	IsShutdown bool           // 标记 SDK 是否已经关闭
+
 	Context        context.Context
 	RetryTimes     int
 	Parser         qxParser.QxParser
@@ -60,6 +64,26 @@ func NewQxClient(ctx context.Context, conf *qxConfig.Config) *QxClient {
 	}
 
 	cli.Init()
+	go cli.Refresh()
+	return cli
+}
+func (cli *QxClient) Refresh() *QxClient {
+	cli.Wg.Add(1)
+	go func() {
+		defer cli.Wg.Done() // 确保任务退出时通知 WaitGroup
+		ticker := time.NewTicker(1 * time.Second)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ticker.C:
+				cli.CheckTokenAndRefresh()
+			case <-cli.Context.Done():
+				fmt.Println("qx sdk: refresh token stopped.")
+				return
+			}
+		}
+	}()
 	return cli
 }
 
@@ -140,6 +164,34 @@ func (cli *QxClient) Login() error {
 	return nil
 }
 
+func (cli *QxClient) CheckTokenAndRefresh() error {
+	// note: 检查 token 是否过期
+	acsTokenKey := fmt.Sprintf("auths.%s.accessToken", cli.Config.AccessKeyId)
+	acsToken := fmt.Sprintf("%s", cli.viper.Get(acsTokenKey))
+	jwtMap, err := qxJwts.JwtParseUnverified(acsToken)
+	if err != nil {
+		logx.Errorf("qx sdk: parse token err: %v", err)
+		return err
+	}
+	exp, ok := jwtMap["exp"].(float64)
+	if !ok {
+		logx.Errorf("qx sdk: parse token exp err")
+		return errors.New("parse token exp err")
+	}
+	expTime := time.Unix(int64(exp), 0).Unix()
+	nowTime := time.Now().Unix() - cli.Config.Deadline
+	if expTime < nowTime {
+		logx.Infof("qx sdk: token expired, refresh token")
+		if err = cli.Login(); err != nil {
+			logx.Errorf("qx sdk: refresh token err: %v", err)
+			return err
+		}
+		logx.Infof("qx sdk: refresh token success")
+	}
+
+	return nil
+}
+
 func (cli *QxClient) WithContext(ctx context.Context) *QxClient {
 	cli.Context = ctx
 	return cli
@@ -157,9 +209,9 @@ func (cli *QxClient) WithTimeout(timeout time.Duration) *QxClient {
 }
 
 func (cli *QxClient) NewRequest(
-	ctx context.Context, // 新增 context 参数
-	url string, // URL
-	method string, // HTTP 方法
+	ctx context.Context,        // 新增 context 参数
+	url string,                 // URL
+	method string,              // HTTP 方法
 	headers *map[string]string, // 请求头
 	sendBody interface{}) func() ([]byte, error) { // 返回闭包函数
 

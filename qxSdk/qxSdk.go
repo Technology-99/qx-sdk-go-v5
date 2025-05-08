@@ -14,7 +14,6 @@ import (
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxMas"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxSas"
 	"github.com/Technology-99/qx-sdk-go-v5/qxSdk/qxTpas"
-	"sync"
 )
 
 //go:embed "version"
@@ -23,10 +22,8 @@ var VersionF embed.FS
 type QxSdk struct {
 	Version string
 
-	ctx        context.Context    // 控制退出
-	cancel     context.CancelFunc // 取消函数
-	wg         sync.WaitGroup     // 等待后台任务退出
-	isShutdown bool               // 标记 SDK 是否已经关闭
+	ctx    context.Context    // 控制退出
+	cancel context.CancelFunc // 取消函数
 
 	QxCtx *qxCtx.QxCtx
 
@@ -102,19 +99,19 @@ func NewDefaultQxSdk(AccessKeyId, AccessKeySecret, Endpoint string) *QxSdk {
 }
 
 func (s *QxSdk) Destroy() {
-	if s.isShutdown {
+	if s.QxCtx.Cli.IsShutdown {
 		fmt.Println("SDK already shutdown.")
 		return
 	}
 
 	fmt.Println("Shutting down SDK...")
-	s.isShutdown = true
+	s.QxCtx.Cli.IsShutdown = true
 
 	// 通知后台任务退出
 	s.cancel()
 
 	// 等待所有 goroutine 退出
-	s.wg.Wait()
+	s.QxCtx.Cli.Wg.Wait()
 
 	// 关闭 HTTP 客户端
 	s.QxCtx.Cli.Client.CloseIdleConnections()
