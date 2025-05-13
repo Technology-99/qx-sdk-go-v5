@@ -171,11 +171,21 @@ func (cli *QxClient) CheckTokenAndRefresh() error {
 	jwtMap, err := qxJwts.JwtParseUnverified(acsToken)
 	if err != nil {
 		logx.Errorf("qx sdk: parse token err: %v", err)
+		if err = cli.Login(); err != nil {
+			logx.Errorf("qx sdk: refresh token err: %v", err)
+			return err
+		}
+		logx.Infof("qx sdk: refresh token success")
 		return err
 	}
 	exp, ok := jwtMap["exp"].(float64)
 	if !ok {
 		logx.Errorf("qx sdk: parse token exp err")
+		if err = cli.Login(); err != nil {
+			logx.Errorf("qx sdk: refresh token err: %v", err)
+			return err
+		}
+		logx.Infof("qx sdk: refresh token success")
 		return errors.New("parse token exp err")
 	}
 	expTime := time.Unix(int64(exp), 0).Unix()
@@ -209,9 +219,9 @@ func (cli *QxClient) WithTimeout(timeout time.Duration) *QxClient {
 }
 
 func (cli *QxClient) NewRequest(
-	ctx context.Context,        // 新增 context 参数
-	url string,                 // URL
-	method string,              // HTTP 方法
+	ctx context.Context, // 新增 context 参数
+	url string, // URL
+	method string, // HTTP 方法
 	headers *map[string]string, // 请求头
 	sendBody interface{}) func() ([]byte, error) { // 返回闭包函数
 
